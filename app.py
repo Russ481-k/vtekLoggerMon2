@@ -107,7 +107,7 @@ def login():
         else:
             return '''
                 <script>
-                    // 경고창
+                    // 경고창 
                     alert("로그인 실패, 다시 시도하세요")
                     // 이전페이지로 이동
                     history.back()
