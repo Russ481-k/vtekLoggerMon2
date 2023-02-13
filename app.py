@@ -21,7 +21,6 @@ def home():
 def mnu001f():
     curr = datetime.datetime.now()
     if request.method == 'GET':
-        print("GET activate")
         datfr = ''
         datto = ''
         if datfr == '':
@@ -33,12 +32,8 @@ def mnu001f():
         cond = dbconn.menuSet("TRAF")
         return render_template('./subm/mnu001.html', result = result, cond = cond)
     else:
-        print("POST activate")
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        print(datfr)
-        print(datto)
-        print(curr)
         if datfr == '':
             datfr = curr - datetime.timedelta(hours = 1)
         if datto == '':
@@ -477,7 +472,6 @@ def networkstat():
     cur.execute(sql)
     result = cur.fetchall()
     db.close()
-    print(result)
     return render_template("stat/dashnetwork.html", result=result)
 
 @app.route('/monmain', methods=['GET','POST'])  # 요청
@@ -491,8 +485,6 @@ def okhome():
     cur.execute(sql2)
     result = cur.fetchall()
     db.close()
-    print(cond)
-    print(result)
     return render_template("stat/indexStart.html", result=result, cond=cond)
 
 @app.route('/menuset')
@@ -504,7 +496,6 @@ def menuset():
     cur.execute(sql1)
     cond = cur.fetchall()
     db.close()
-    print(cond)
     return render_template("menu/menuAdmin.html", cond=cond)
 
 @app.route('/updatemenu', methods=['GET','POST'])
