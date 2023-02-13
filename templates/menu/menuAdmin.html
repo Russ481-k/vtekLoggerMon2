@@ -31,39 +31,42 @@
 </head>
 <body>
     <div id="commonTopHeader">
-{% include './menu/comTopHeader.html' %} 
+{% include './menu/comTopHeader.html' %}
     </div>
 
     <div id="commonBodyContents">
-{% include './menu/sidemenu2.html' %}
+{% include './menu/sidemenu3.html' %}
         <!-- commonSideMenu end-->
 
         <div id="commonContent">
             <div class="container">
-{% include './Search/comSearch.html' %}
                 <div>
                   <table id="foo-table" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                           {% for k in cond %}                            
-                            <td class = "showMenu">{{k[1]}}</td>
-                           {% endfor %}
+                             <td class = "showMenu">컬럼명</td>
+                             <td>표시제목</td>
+                             <td>사용여부</td>
                             </tr>
                         </thead>
                         <tbody>
-			    {% for i in result %}
+                            {% for i in cond %}
                             <tr>
-				{% for j in cond %}
-                            <td class = "showMenu">{{i[j[0]]}}</td>
-                                {% endfor %}
+                                 <td class = "showMenu">{{i[0]}}</td>
+				 <td class = "showMenu"><input type="text" class = "menutit" value = "{{i[1]}}"></td>
+				 <td class = "showMenu"><select class = "useY">
+							<option value = "Y" {% if i[2] == 'Y' %} selected {% endif %} >사용</option>
+							<option value = "N" {% if i[2] == 'N' %} selected {% endif %} >미사용</option>
+							</select>
+					</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                            <tr>
-			{% for n in cond %}
                             <td></td>
-                        {% endfor %}
+ 			    <td></td>
+                            <td></td>
                            </tr>
                         </tfoot>
                    </table>

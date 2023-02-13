@@ -37,6 +37,29 @@ def fromtoTraffic(datfr, datto):
         sql = '''SELECT * FROM inoutT WHERE d002 between %s AND %s'''
         cursor.execute(sql, (datfr, datto))
         rows = cursor.fetchall()
+        print(rows)
+    except Exception as e:
+        print('접속오류', e)
+    finally:
+        if connection:
+            connection.close()
+    return rows
+
+def menuSet(typ):
+    rows = None
+    connection = None
+    try:
+        connection = my.connect(host='192.168.1.45',
+                                user='swcore',
+                                password='core2020',
+                                database='logger',
+                                cursorclass=my.cursors.DictCursor
+                                )
+        cursor = connection.cursor()
+        sql = '''SELECT activeMenu, menuTitle FROM menuCustom WHERE useYn = %s AND menuNo = %s'''
+        cursor.execute(sql, ("Y", typ))
+        rows = cursor.fetchall()
+        print(rows)
     except Exception as e:
         print('접속오류', e)
     finally:
