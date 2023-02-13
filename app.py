@@ -21,6 +21,7 @@ def home():
 def mnu001f():
     curr = datetime.datetime.now()
     if request.method == 'GET':
+        print("GET activate")
         datfr = ''
         datto = ''
         if datfr == '':
@@ -32,14 +33,17 @@ def mnu001f():
         cond = dbconn.menuSet("TRAF")
         return render_template('./subm/mnu001.html', result = result, cond = cond)
     else:
-        datfr = request.form.get('datefrom')
-        datto = request.form.get('dateto')
+        print("POST activate")
+        datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
+        datto = request.form.get('dateto') + " " + request.form.get('timeto')
+        print(datfr)
+        print(datto)
+        print(curr)
         if datfr == '':
             datfr = curr - datetime.timedelta(hours = 1)
         if datto == '':
             datto = curr
-        datfr = datfr.strftime('%Y-%m-%d %H:00')
-        datto = datto.strftime('%Y-%m-%d %H:00')
+
         result = dbconn.fromtoTraffic(datfr,datto)
         cond = dbconn.menuSet("TRAF")
         return render_template("./subm/mnu001.html", result = result, cond = cond)
@@ -493,6 +497,7 @@ def okhome():
 
 @app.route('/menuset')
 def menuset():
+
     db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
     cur = db.cursor()
     sql1 = "select activeMenu,menuTitle,useYN from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
@@ -500,6 +505,27 @@ def menuset():
     cond = cur.fetchall()
     db.close()
     print(cond)
+    return render_template("menu/menuAdmin.html", cond=cond)
+
+@app.route('/updatemenu', methods=['GET','POST'])
+def updatemenu():
+    formtotal = request.form
+    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    cur = db.cursor()
+    mtitles = formtotal.getlist('mtitle')
+    mkeys = formtotal.getlist('mkey')
+    muses = formtotal.getlist('muse')
+    for i in range(len(mkeys)):
+        val01 = mtitles[i]
+        val02 = muses[i]
+        val03 = mkeys[i]
+        sql1 = "update menuCustom set menuTitle = %s , useYN = %s where menuNo = 'TRAF' and activeMenu = %s"
+        cur.execute(sql1, (val01, val02, val03))
+    db.commit()
+    sql2 = "select activeMenu,menuTitle,useYN from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
+    cur.execute(sql2)
+    cond = cur.fetchall()
+    db.close()
     return render_template("menu/menuAdmin.html", cond=cond)
 
 @app.route('/dashmain')  # 요청

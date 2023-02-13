@@ -39,6 +39,8 @@
         <!-- commonSideMenu end-->
 
         <div id="commonContent">
+        <form method="post" action="/updatemenu">
+            <div style="height: 10%"><div style="float:left;width:30%"><h3>Menu Custom</h3></div><div style="float:right"><input type="submit" value="변경사항 저장"/></div></div>
             <div class="container">
                 <div>
                   <table id="foo-table" class="table table-striped table-bordered" style="width:100%">
@@ -52,9 +54,9 @@
                         <tbody>
                             {% for i in cond %}
                             <tr>
-                                 <td class = "showMenu">{{i[0]}}</td>
-				 <td class = "showMenu"><input type="text" class = "menutit" value = "{{i[1]}}"></td>
-				 <td class = "showMenu"><select class = "useY">
+                                 <td class = "showMenu" ><input type="text" name = "mkey" value="{{i[0]}}" readonly /></td>
+				 <td class = "showMenu"><input type="text" name = "mtitle" value = "{{i[1]}}"></td>
+				 <td class = "showMenu"><select name = "muse">
 							<option value = "Y" {% if i[2] == 'Y' %} selected {% endif %} >사용</option>
 							<option value = "N" {% if i[2] == 'N' %} selected {% endif %} >미사용</option>
 							</select>
@@ -70,6 +72,7 @@
                            </tr>
                         </tfoot>
                    </table>
+                </form>
                 </div>
             </div>
         </div>
