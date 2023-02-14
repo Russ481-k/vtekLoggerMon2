@@ -37,7 +37,6 @@ def fromtoTraffic(datfr, datto):
         sql = '''SELECT * FROM inoutT WHERE d002 between %s AND %s'''
         cursor.execute(sql, (datfr, datto))
         rows = cursor.fetchall()
-        print(rows)
     except Exception as e:
         print('접속오류', e)
     finally:
@@ -59,7 +58,6 @@ def menuSet(typ):
         sql = '''SELECT activeMenu, menuTitle FROM menuCustom WHERE useYn = %s AND menuNo = %s order by sortCust'''
         cursor.execute(sql, ("Y", typ))
         rows = cursor.fetchall()
-        print(rows)
     except Exception as e:
         print('접속오류', e)
     finally:
