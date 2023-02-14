@@ -4,57 +4,67 @@
 {% include '/menu/header.html' %}
     <script>
         $(document).ready(function () {
-            $('#foo-table thead td').each(function () {
+            $('#foo-table tbody tr:first td').each(function () {
                 var title = $(this).text();
                 $(this).html('<input type="text" placeholder="' + title + '" />');
             });
             $('#foo-table').DataTable({
-             "pageLength":20,
-             "destroy":true,
-             "order":[2,'desc'],
+                "pageLength":20,
+                "destroy":true,
                 initComplete: function () {
-            // Apply the search
-            this.api()
-                .columns('.showMenu')
-                .every(function () {
-                    var that = this;
-                    $('input', this.header()).on('keyup change clear', function () {
-                        if (that.search() !== this.value) {
-                            that.search(this.value).draw();
-                        }
+                // Apply the search
+                console.log(this.api().columns());
+                this.api()
+                    .columns('.showClass')
+                    .every(function () {
+                        var that = this;
+                        $('input', this.header()).on('keyup change clear', function () {
+                            if (that.search() !== this.value) {
+                                that.search(this.value).draw();
+                            }
+                        });
                     });
-                });
-        },
-        });
+                },
+            });
         });
 
     </script>
 </head>
 <body>
     <div id="commonTopHeader">
-{% include './menu/comTopHeader.html' %}
+    {% include './menu/comTopHeader.html' %}
     </div>
     <div id="commonBodyContents">
-{% include './menu/sidemenu2.html' %}
+    {% include './menu/sidemenu2.html' %}
         <!-- commonSideMenu end-->
         <div id="commonContent">
             <div class="container">
-            <h3>  TRAFFIC LOG</h3>
-{% include './Search/mnu001Search.html' %}
+            <h3>TRAFFIC LOG</h3>
+            {% include './Search/mnu001Search.html' %}
                 <div>
+                    <table id="foo-input-search" class="table table-striped table-bordered" style="width:100%">
+                        <tr>
+                            
+                        </tr>
+                    </table>
                    <table id="foo-table" class="table table-striped table-bordered" style="width:100%">
                         <thead>
-			   <tr>
-                           {% for k in cond %}
-                            <td class = "showMenu">{{k['menuTitle']}}</td>
-                           {% endfor %}
+                            <tr>
+                                {% for k in cond %}
+                                    <th>{{k['menuTitle']}}</th>
+                                {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
-                         {% for i in result %}
+                            <tr>
+                            {% for k in cond %}
+                                <td class="showClass">{{k['menuTitle']}}</td>
+                            {% endfor %}
+                            </tr>
+                            {% for i in result %}
                             <tr>
                                 {% for j in cond %}
-                            <td class = "showMenu">{{i[j['activeMenu']]}}</td>
+                                <td class = "showMenu">{{i[j['activeMenu']]}}</td>
                                 {% endfor %}
                             </tr>
                             {% endfor %}
