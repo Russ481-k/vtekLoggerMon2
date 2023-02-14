@@ -56,7 +56,7 @@ def menuSet(typ):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        sql = '''SELECT activeMenu, menuTitle FROM menuCustom WHERE useYn = %s AND menuNo = %s'''
+        sql = '''SELECT activeMenu, menuTitle FROM menuCustom WHERE useYn = %s AND menuNo = %s order by sortCust'''
         cursor.execute(sql, ("Y", typ))
         rows = cursor.fetchall()
         print(rows)

@@ -49,6 +49,7 @@
                              <td class = "showMenu">컬럼명</td>
                              <td>표시제목</td>
                              <td>사용여부</td>
+                                <td>배치순번</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,19 +57,21 @@
                             <tr>
                                  <td class = "showMenu" ><input type="text" name = "mkey" value="{{i[0]}}" readonly /></td>
 				 <td class = "showMenu"><input type="text" name = "mtitle" value = "{{i[1]}}"></td>
-				 <td class = "showMenu"><select name = "muse">
+				 <td class = "showMenu">{{i[2]}}<select name = "muse">
 							<option value = "Y" {% if i[2] == 'Y' %} selected {% endif %} >사용</option>
 							<option value = "N" {% if i[2] == 'N' %} selected {% endif %} >미사용</option>
 							</select>
 					</td>
+                            <td class = "showMenu" ><input type="number" min="0" max="100" name = "msort" value="{{i[3]}}" /></td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                            <tr>
                             <td></td>
- 			    <td></td>
+ 			                <td></td>
                             <td></td>
+                               <td></td>
                            </tr>
                         </tfoot>
                    </table>

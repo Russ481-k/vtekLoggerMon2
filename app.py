@@ -492,7 +492,7 @@ def menuset():
 
     db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
     cur = db.cursor()
-    sql1 = "select activeMenu,menuTitle,useYN from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
+    sql1 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
     cur.execute(sql1)
     cond = cur.fetchall()
     db.close()
@@ -506,14 +506,16 @@ def updatemenu():
     mtitles = formtotal.getlist('mtitle')
     mkeys = formtotal.getlist('mkey')
     muses = formtotal.getlist('muse')
+    msorts = formtotal.getlist('msort')
     for i in range(len(mkeys)):
         val01 = mtitles[i]
         val02 = muses[i]
-        val03 = mkeys[i]
-        sql1 = "update menuCustom set menuTitle = %s , useYN = %s where menuNo = 'TRAF' and activeMenu = %s"
-        cur.execute(sql1, (val01, val02, val03))
+        val03 = msorts[i]
+        val04 = mkeys[i]
+        sql1 = "update menuCustom set menuTitle = %s , useYN = %s , sortCust = %s where menuNo = 'TRAF' and activeMenu = %s"
+        cur.execute(sql1, (val01, val02, val03, val04))
     db.commit()
-    sql2 = "select activeMenu,menuTitle,useYN from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
+    sql2 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where menuNo = 'TRAF' and attrib not like '%XXX%'"
     cur.execute(sql2)
     cond = cur.fetchall()
     db.close()
