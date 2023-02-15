@@ -21,7 +21,7 @@ def selectUsers(uid, upw):
             connection.close()
     return row
 
-def fromtoTraffic(datfr, datto):
+def fromtoTraffic(datfr, datto, wherecon):
     rows = None
     connection = None
     try:
@@ -34,8 +34,8 @@ def fromtoTraffic(datfr, datto):
         cursor = connection.cursor()
         datfr = datfr+'%'
         datto = datto+'%'
-        sql = '''SELECT * FROM inoutT WHERE d002 between %s AND %s'''
-        cursor.execute(sql, (datfr, datto))
+        sql = '''SELECT * FROM inoutT WHERE d002 between %s AND %s %s'''
+        cursor.execute(sql, (datfr, datto, wherecon))
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)

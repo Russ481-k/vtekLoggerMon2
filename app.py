@@ -23,23 +23,30 @@ def mnu001f():
     if request.method == 'GET':
         datfr = ''
         datto = ''
+        wherecon = ''
         if datfr == '':
-            datfr = curr - datetime.timedelta(hours=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:00')
+            datfr = curr - datetime.timedelta(minutes=5)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M')
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:00')
-        result = dbconn.fromtoTraffic(datfr, datto)
+            datto = curr.strftime('%Y-%m-%d %H:%M')
+        print(datfr)
+        print(datto)
+        print(wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TRAF")
         return render_template('./subm/mnu001.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
+        wherecon = request.form.get('whereplus')
+        if wherecon != '':
+            wherecon = ' and ' + wherecon
         if datfr == '':
-            datfr = curr - datetime.timedelta(hours = 1)
+            datfr = curr - datetime.timedelta(minutes=5)
         if datto == '':
             datto = curr
-
-        result = dbconn.fromtoTraffic(datfr,datto)
+        print(wherecon)
+        result = dbconn.fromtoTraffic(datfr,datto, wherecon)
         cond = dbconn.menuSet("TRAF")
         return render_template("./subm/mnu001.html", result = result, cond = cond)
 
