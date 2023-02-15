@@ -1,4 +1,17 @@
 @charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+table{
+    font-size: 0.8rem;
+}
+
+table > thead{
+    font-family: 'Lato', sans-serif;
+}
+
+#foo-table_wrapper{
+    width: 87vw;
+}
 
 /*commonBodyContents 시작*/
 #commonBodyContents {
@@ -75,10 +88,7 @@
     padding:12px 12px 10px 12px;
     box-sizing: border-box;
     display:grid;
-    /* grid-template-columns: repeat(6, 1fr);
-    column-gap: 10px;
-    row-gap: 10px; */
-    overflow-y:auto;
+    overflow: hidden;
 }
 
 #commonContent>div {
@@ -150,10 +160,8 @@
 }
 
 #commonContent .container .topSearchWrap div:last-child form input:last-of-type{
-    background-color: #769cc3;
-    color:#fff;
-    border:0;
-    border-radius: 4px;
+    border: 1px solid #BDBDBD;
+    border-radius: 5px;
     padding:1px 2px;
     box-sizing: border-box;
 }
@@ -212,9 +220,4 @@
 /*1920 commonBodyContents 시작*/
 #sideMenu ul:not(#panel), #commonContent {
     height:calc(100vh - 40px);
-}
-
-
-table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td{
-    font-size: 1.2rem;
 }

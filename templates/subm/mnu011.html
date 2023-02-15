@@ -9,23 +9,26 @@
                 $(this).html('<input type="text" placeholder="' + title + '" />');
             });
             $('#foo-table').DataTable({
-             "pageLength":20,
-             "destroy":true,
-             "order":[2,'desc'],
+                "pageLength":20,
+                "destroy":true,
+                "order":[0,'desc'],
+                "scrollX": true,
+                "scrollY": "50vh",
+                "scrollCollapse": true,
                 initComplete: function () {
-            // Apply the search
-            this.api()
-                .columns('.showMenu')
-                .every(function () {
-                    var that = this;
-                    $('input', this.header()).on('keyup change clear', function () {
-                        if (that.search() !== this.value) {
-                            that.search(this.value).draw();
-                        }
+                // Apply the search
+                this.api()
+                    .columns()
+                    .every(function () {
+                        var that = this;
+                        $('input', this.header()).on('keyup change clear', function () {
+                            if (that.search() !== this.value) {
+                                that.search(this.value).draw();
+                            }
+                        });
                     });
-                });
-        },
-        });
+                },
+            });
         });
 
     </script>
@@ -42,19 +45,24 @@
             <h3>  Tunnel Inspection LOG</h3>
 {% include './Search/comSearch.html' %}
                 <div>
-                   <table id="foo-table" class="table table-striped table-bordered" style="width:100%">
+                   <table id="foo-table" class="table table-striped table-bordered">
                         <thead>
-			   <tr>
-                           {% for k in cond %}
-                            <td class = "showMenu">{{k['menuTitle']}}</td>
-                           {% endfor %}
+                            <tr>
+                                {% for k in cond %}
+                                <th>{{k['menuTitle']}}</th>
+                                {% endfor %}
+                            </tr>
+			                <tr>
+                                {% for k in cond %}
+                                <td class = "showMenu">{{k['menuTitle']}}</td>
+                                {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
                          {% for i in result %}
                             <tr>
                                 {% for j in cond %}
-                            <td class = "showMenu">{{i[j['activeMenu']]}}</td>
+                            <td class = "showMenu"><a href="javascript:void(0);" data-colname="{{j['activeMenu']}}" onClick="searchTextCol(this);">{{i[j['activeMenu']]}}</a></td>
                                 {% endfor %}
                             </tr>
                             {% endfor %}
