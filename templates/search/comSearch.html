@@ -20,7 +20,7 @@
 <script>
   $(window).ready(function(){
     let pathName = $(location).attr("pathname");
-    let searchClass = $(".search");
+    let searchClass = $(".Search");
     searchClass.attr("action", pathName);
     if(localStorage.getItem("setSearchText") !== undefined){
       $("#whereplus").val(localStorage.getItem("setSearchText"));

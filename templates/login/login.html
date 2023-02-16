@@ -9,12 +9,14 @@
 	<body>
 		<div id="loginContents">
 			<div id="loginContent">
+                <div id="loginIntroduce">
+                    <div id="loginSpans">
+					    <span id="loginIntroSpan_1">Welcome to </span>
+					    <span id="loginIntroSpan_2">Palo Log</span>
+				    </div>
+
 				<div class="login">
 					<h1>Login</h1>
-					<div class="links">
-						<a href="{{ url_for('login') }}" class="active">Login</a>
-						<a href="#">Register</a>
-					</div>
 					<form action="{{ url_for('login') }}" method="post">
 						<label for="username">
 							<i class="fas fa-user"></i>
@@ -27,16 +29,7 @@
 						<input type="submit" value="Login">
 					</form>
 				</div>
-			</div>
-
-			<div id="loginIntroduce">
-				<div id="loginSpans">
-					<span id="loginIntroSpan_1">Welcome to </span>
-					<span id="loginIntroSpan_2">LogVision</span>
-				</div>
-				<div id="loginIntroImgDiv">
-					<img src="/static/images/loginIntroduce.png" id="loginIntroImg" />
-				</div>
+                    </div>
 			</div>
 		</div>
 	</body>
