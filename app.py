@@ -566,17 +566,36 @@ def networkstat():
 
 @app.route('/monmain', methods=['GET','POST'])  # 요청
 def okhome():
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
-    cur = db.cursor()
-    sql1 = "select sortNo,menuTitle from menuCustom where useYN ='Y' and menuNo = 'TRAF' and attrib not like '%XXX%'"
-    sql2 = "select * from hBefore order by d002 desc limit 100"
-    cur.execute(sql1)
-    cond = cur.fetchall()
-    cur.execute(sql2)
-    result = cur.fetchall()
-    db.close()
-    return render_template("stat/indexStart.html", result=result, cond=cond)
-
+    curr = datetime.datetime.now()
+    if request.method == 'GET':
+        datfr = ''
+        datto = ''
+        wherecon = ''
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=2)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M')
+        print(datfr)
+        print(datto)
+        print(wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
+        cond = dbconn.menuSet("TRAF")
+        return render_template('./stat/indexStart.html', result=result, cond=cond)
+    else:
+        datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
+        datto = request.form.get('dateto') + " " + request.form.get('timeto')
+        wherecon = request.form.get('whereplus')
+        if wherecon != '':
+            wherecon = wherecon
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=2)
+        if datto == '':
+            datto = curr
+        print(wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
+        cond = dbconn.menuSet("TRAF")
+        return render_template("./stat/indexStart.html", result=result, cond=cond)
 @app.route('/menuset')
 def menuset():
 
