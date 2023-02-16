@@ -9,6 +9,10 @@ table > thead{
     font-family: 'Lato', sans-serif;
 }
 
+table > thead > tr:first-child > th{
+    background-color: #EAEAEA;
+}
+
 #foo-table_wrapper{
     width: 87vw;
 }

@@ -3,13 +3,29 @@
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="{{ url_for('static', filename = '/js/loading.js') }}"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/>
     <link href="{{ url_for('static', filename = 'css/root.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename = 'css/commonHeader.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename = 'css/commonContent.css') }}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = '/css/loading.css') }}" />
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
-
+    <div id="loadingDiv"></div>
     <script>
+        $("#loadingDiv").loading({
+            onStart: function (loading) {
+                loading.overlay.fadeIn(1000);
+            },
+            onStop: function (loading) {
+                loading.overlay.fadeOut(1000);
+            }
+        });
+
+        $(window).ready(function(){
+            $("#loadingDiv").hide();
+            $("#loadingDiv").loading("toggle");
+        });
+
         function searchTextCol(e){
             let thisEle = $(e);
             let dataColumn = thisEle.data("colname");
@@ -17,11 +33,12 @@
             let setText = "";
 
             if(whereplus.val() === ""){
-                setText += dataColumn + "=\'" + thisEle.text()+ "\'";
+                setText += " AND " + dataColumn + "='" + thisEle.text() + "'";
             }else{
-                setText += whereplus.val() + " and " + dataColumn + "=\'" + thisEle.text() + "\'";
+                setText += whereplus.val() + " AND " + dataColumn + "='" + thisEle.text() + "'";
             }
 
+            localStorage.setItem("setSearchText", setText);
             whereplus.val(setText);
         }
     </script>

@@ -34,8 +34,8 @@ def fromtoTraffic(datfr, datto, wherecon):
         cursor = connection.cursor()
         datfr = datfr+'%'
         datto = datto+'%'
-        sql = '''SELECT * FROM inoutT WHERE d002 between %s AND %s %s'''
-        cursor.execute(sql, (datfr, datto, wherecon))
+        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + str(wherecon)
+        cursor.execute(sql, (datfr, datto))
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)
