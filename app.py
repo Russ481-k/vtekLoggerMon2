@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, redirect , session
+import json
+from flask import Flask, jsonify, request, render_template, redirect , session
 
 import dbconn
 from dbconn import selectUsers
@@ -17,6 +18,32 @@ app.secret_key = 'fsdfsfgsfdg3234'
 def home():
     return render_template('./login/login.html')
 
+@app.route('/subm/mnujson', methods=['GET'])
+def mnujson():
+    curr = datetime.datetime.now()
+    datfr = ''
+    datto = ''
+    draw = request.args.get("draw")
+    pageLength = request.args.get("length")
+    
+    if(request.args.get("whereplus") != None):
+        wherecon = request.args.get("whereplus")
+    else:
+        wherecon = ''
+    if datfr == '':
+        datfr = curr - datetime.timedelta(minutes=5)
+        datfr = datfr.strftime('%Y-%m-%d %H:%M')
+    if datto == '':
+        datto = curr.strftime('%Y-%m-%d %H:%M')
+    resultlength = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), draw, pageLength)
+    resultData = {
+        "data": result,
+        "recordsTotal": len(resultlength),
+        "recordsFiltered": len(resultlength),
+    }
+    return jsonify(resultData)
+
 @app.route('/subm/mnu001', methods=['GET', 'POST'])
 def mnu001f():
     curr = datetime.datetime.now()
@@ -29,20 +56,21 @@ def mnu001f():
             datfr = datfr.strftime('%Y-%m-%d %H:%M')
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M')
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
         cond = dbconn.menuSet("TRAF")
         return render_template('./subm/mnu001.html', result = result, cond = cond)
     else:
+        datfr = ''
+        datto = ''
+        wherecon = ''
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
         wherecon = request.form.get('whereplus')
-        if wherecon != '':
-            wherecon = wherecon
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=5)
         if datto == '':
             datto = curr
-        result = dbconn.fromtoTraffic(datfr,datto, wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
         cond = dbconn.menuSet("TRAF")
         return render_template("./subm/mnu001.html", result = result, cond = cond)
 

@@ -120,40 +120,49 @@ table > thead > tr:first-child > th{
 /*topSearchWrap 시작*/
 #commonContent .container .topSearchWrap {
     width:100%;
-    height:60px;
     overflow: hidden;
-    display: grid;
-    grid-template-columns: 625px 1fr;
-    align-items: center;
 }
 
-#commonContent .container .topSearchWrap div .search, #commonContent .container .topSearchWrap .search div{
-    float:left;
-    padding-right:8px;
+#commonContent > .container > .topSearchWrap > div > div {
     display: flex;
     align-items: center;
 }
 
-#commonContent .container .topSearchWrap div:last-child form{
-    display: grid;
-    grid-template-columns: 1fr 48px;
-    width:100%;
-    padding-right:0;
+#commonContent > .container > .topSearchWrap > div > div > div {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-/* #commonContent .container .topSearchWrap .search, #commonContent .container .topSearchWrap .mainTopMenu{
-    padding-right:8px;
-} */
-
-#commonContent .container .topSearchWrap div:last-child form input:first-of-type{
-    margin-right:6px;
-    border:1px solid #ccc;
-    padding:1px 2px;
-    border-radius: 4px;
-    box-sizing: border-box;
+#commonContent > .container > .topSearchWrap > div > .search > div{
+    display: flex;
+    align-items: center;
 }
-#commonContent .container .topSearchWrap div form input {
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child{
+    padding: 5px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div > div{
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > button > img{
+    width: 1.2vw;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > input{
     border:1px solid #ccc;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 15px;
+    padding-left: 5px;
+    width: 84vw;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > button{
+    border: 0;
+    background-color: #ffffff;
 }
 
 #commonContent .container .topSearchWrap div form input:focus,
@@ -163,50 +172,6 @@ table > thead > tr:first-child > th{
     outline: 0;
 }
 
-#commonContent .container .topSearchWrap div:last-child form input:last-of-type{
-    border: 1px solid #BDBDBD;
-    border-radius: 5px;
-    padding:1px 2px;
-    box-sizing: border-box;
-}
-
-/*topSearchWrap comSearch 시작*/
-/* #commonContent .comSearch {
-    background-color:#fff;
-    display: grid;
-    overflow: hidden;
-    position: relative;
-    float: left;
-    margin-right: 8px;
-}
-
-#commonContent .comSearch ul {
-    height:100%;
-}
-
-#commonContent .comSearch ul li{
-    height:100%;
-    float:left;
-    text-align:center;
-}
-
-#commonContent .comSearch ul li button{
-    font-size: 14px;
-    font-family:'NanumSquareRound';
-    border:0;
-    border-radius: 2px;
-    padding:2px 8px;
-    margin:0 4px;
-    cursor:pointer;
-    background-color: #b1b1b1;
-    color:#fff;
-}
-
-#commonContent .comSearch ul .checked {
-    background-color: #5a7fc4;
-    color:#fff;
-} */
-/*topSearchWrap comSearch 끝*/
 /*topSearchWrap 끝*/
 
 ::-webkit-scrollbar {

@@ -41,4 +41,55 @@
             localStorage.setItem("setSearchText", setText);
             whereplus.val(setText);
         }
+
+        function pageDataSettings(result, cond){
+            let dataArr = [];
+            let datas = {};
+
+            for(let i = 0; i < cond.length; i++){
+                let dataObj = {};
+                dataObj.data = cond[i].activeMenu;
+                dataObj.render = function(data, type, row){
+                    data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";
+                    return data;
+                };
+                dataArr.push(dataObj);
+            }
+
+            $('#foo-table thead tr:last td').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="' + title + '" />');
+            });
+
+            setTimeout(() => {
+                if(localStorage.getItem("searchFlag") || localStorage.getItem("searchFlag") !== undefined){
+                    datas.datefrom = $("#datefrom").val();
+                    datas.timefrom = $("#timefrom").val();
+                    datas.dateto = $("#dateto").val();
+                    datas.datetimetofrom = $("#timeto").val();
+                    datas.whereplus = $("#whereplus").val();
+                }
+
+                $('#foo-table').DataTable({
+                    "info": false,
+                    "destroy":true,
+                    "order": [0, "desc"],
+                    "scrollX": true,
+                    "scrollY": "50vh",
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": '/subm/mnujson',
+                        "type": 'get',
+                        "contentType": "application/json",
+                        "dataType": 'json',
+                        "data": datas,
+                    },
+                    "columns": dataArr,
+                    "lengthChange" : true, 
+                    "lengthMenu" : [10, 20, 30, 40, 50, 100],
+                    "pageLength": 20,
+                });
+            }, 300)
+        }
     </script>

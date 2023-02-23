@@ -34,7 +34,33 @@ def fromtoTraffic(datfr, datto, wherecon):
         cursor = connection.cursor()
         datfr = datfr+'%'
         datto = datto+'%'
-        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + str(wherecon)
+        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon
+        cursor.execute(sql, (datfr, datto))
+        rows = cursor.fetchall()
+    except Exception as e:
+        print('접속오류', e)
+    finally:
+        if connection:
+            connection.close()
+    return rows
+
+def fromtoTrafficLimit(datfr, datto, wherecon, draw, pageLength):
+    rows = None
+    connection = None
+    try:
+        connection = my.connect(host='192.168.1.45',
+                                user='swcore',
+                                password='core2020',
+                                database='logger',
+                                cursorclass=my.cursors.DictCursor
+                                )
+        cursor = connection.cursor()
+        datfr = datfr+'%'
+        datto = datto+'%'
+        firstLimit = (int(draw) - int(1)) * int(pageLength)
+        lastLimit = int(pageLength)
+        print("SELECT * FROM inoutT WHERE d002 between " + str(datfr) + " AND " + str(datto) + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit))
+        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit)
         cursor.execute(sql, (datfr, datto))
         rows = cursor.fetchall()
     except Exception as e:
