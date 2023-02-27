@@ -285,11 +285,11 @@ body{margin:0 auto;}
     color: #FFFFFF;
 }
 
-@media(max-width: 1439px){
+/* @media(max-width: 1439px){
     #loginContents #loginIntroduce{display: none;}
     #loginContents #loginContent{
         width:100%;
-        background-image: url(../../images/login/loginBackground.jpg);
+        background-image: url(/static/images/login/loginBackground.jpg);
         background-size: cover;
     }
     #loginContents #loginContent #loginForm{
@@ -338,10 +338,10 @@ body{margin:0 auto;}
         width:400px;
         border-radius: 8px;
     }
-}
+} */
 /*화면크기 1439+ end*/
 
-@media(max-width: 600px){
+/* @media(max-width: 600px){
     #loginContent{padding:0 16px; box-sizing: border-box;}
 
     #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
@@ -352,7 +352,7 @@ body{margin:0 auto;}
         width:70%;
         padding:50px 30px;
         transform: translate(-50%, -50%);
-        /* padding:80px 40px; */
+        padding:80px 40px;
         border-radius:16px;
     }
 
@@ -380,5 +380,5 @@ body{margin:0 auto;}
         background-image: url(../../images/login/loginBackground.jpg);
         background-size: cover;
     }
-}
+} */
 /*화면크기 600- end*/
