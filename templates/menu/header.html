@@ -11,6 +11,36 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = '/css/loading.css') }}" />
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
     <div id="loadingDiv"></div>
+    <style>
+        .bottom{
+            display: flex;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .bottom > .dataTables_length{
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            width: 100%;
+        }
+
+        .bottom > .dataTables_paginate{
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            width: 100%;
+        }
+
+        .dataTables_scrollBody > table{
+            width: inherit !important;
+        }
+
+        .container{
+            max-height: 100%;
+            overflow: hidden;
+        }
+    </style>
     <script>
         $("#loadingDiv").loading({
             onStart: function (loading) {
@@ -70,12 +100,18 @@
                     datas.whereplus = $("#whereplus").val();
                 }
 
+                $(window).resize(function() {
+                    console.log($(window).height());
+                    $('.dataTables_scrollBody').css('height', ($(window).height() - 200));
+                });
+
                 $('#foo-table').DataTable({
+                    "searching": false,
                     "info": false,
+                    "scrollY": ($(window).height() - 230),
                     "destroy":true,
+                    "dom": 't<"bottom"lp>',
                     "order": [0, "desc"],
-                    "scrollX": true,
-                    "scrollY": "50vh",
                     "processing": true,
                     "serverSide": true,
                     "ajax": {
@@ -88,7 +124,7 @@
                     "columns": dataArr,
                     "lengthChange" : true, 
                     "lengthMenu" : [10, 20, 30, 40, 50, 100],
-                    "pageLength": 20,
+                    "pageLength": 50,
                 });
             }, 300)
         }
