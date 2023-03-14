@@ -63,12 +63,11 @@
             let setText = "";
 
             if(whereplus.val() === ""){
-                setText += " AND " + dataColumn + "='" + thisEle.text() + "'";
+                setText += " AND (" + dataColumn + "='" + thisEle.data("value") + "')";
             }else{
-                setText += whereplus.val() + " AND " + dataColumn + "='" + thisEle.text() + "'";
+                setText += whereplus.val() + " AND (" + dataColumn + "='" + thisEle.data("value") + "')";
             }
 
-            localStorage.setItem("setSearchText", setText);
             whereplus.val(setText);
         }
 
@@ -80,7 +79,27 @@
                 let dataObj = {};
                 dataObj.data = cond[i].activeMenu;
                 dataObj.render = function(data, type, row){
-                    data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";
+                    let dataFormat = Date.parse(data);
+                    let valueData;
+
+                    if(cond[i].activeMenu === "d002"){
+                        let getDate = new Date(data);
+                        valueData = getDate.getFullYear() + "-" + (getDate.getMonth() + 1) + "-" + getDate.getDate() + " " + getDate.getHours() + ":" + getDate.getMinutes();
+                    }else{
+                        valueData = data;
+                    }
+
+                    console.log(valueData);
+                    if(!isNaN(dataFormat)){
+                        if(!isNaN(data)){
+                            data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";    
+                        }else{
+                            data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + new Date(dataFormat).toLocaleString() + "</a>";
+                        }
+                    }else{
+                        data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";
+                    }
+
                     return data;
                 };
                 dataArr.push(dataObj);
@@ -101,7 +120,6 @@
                 }
 
                 $(window).resize(function() {
-                    console.log($(window).height());
                     $('.dataTables_scrollBody').css('height', ($(window).height() - 200));
                 });
 

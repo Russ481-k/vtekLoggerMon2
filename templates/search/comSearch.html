@@ -29,6 +29,7 @@
   });
 
   function searchSubmit(){
+      localStorage.setItem("setSearchText", $("#whereplus").val());
       localStorage.setItem("searchFlag", true);
       location.reload();
   }
