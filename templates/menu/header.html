@@ -81,21 +81,16 @@
                 dataObj.render = function(data, type, row){
                     let dataFormat = Date.parse(data);
                     let valueData;
-
+                    
                     if(cond[i].activeMenu === "d002"){
-                        let getDate = new Date(data);
-                        valueData = getDate.getFullYear() + "-" + (getDate.getMonth() + 1) + "-" + getDate.getDate() + " " + getDate.getHours() + ":" + getDate.getMinutes();
+                        let getDate = dateConvert(data);
+                        valueData = getDate.getFullYear() + "-" + String((getDate.getMonth() + 1)).padStart(2, "0") + "-" + getDate.getDate() + " " + getDate.getHours() + ":" + getDate.getMinutes() + ":" + String(getDate.getSeconds()).padStart(2, "0");
                     }else{
                         valueData = data;
                     }
 
-                    console.log(valueData);
                     if(!isNaN(dataFormat)){
-                        if(!isNaN(data)){
-                            data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";    
-                        }else{
-                            data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + new Date(dataFormat).toLocaleString() + "</a>";
-                        }
+                        data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + valueData + "</a>";
                     }else{
                         data = "<a href=\"javascript:void(0);\" data-colname=\"" + cond[i].activeMenu + "\" data-value=\"" + valueData + "\" onClick=\"searchTextCol(this);\">" + data + "</a>";
                     }
@@ -145,5 +140,13 @@
                     "pageLength": 50,
                 });
             }, 300)
+        }
+
+        function dateConvert(date){
+            let getDate = new Date(date);
+            let utcDate = getDate.getTime() + (getDate.getTimezoneOffset() * 60 * 1000);
+            //let koreaTimeDiff = 9 * 60 * 60 * 1000;
+            
+            return new Date(utcDate);
         }
     </script>
