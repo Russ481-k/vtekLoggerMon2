@@ -662,10 +662,10 @@ def updatemenu():
 def searchSel():
     db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
     cur = db.cursor()
-    sql = "select * from dayservice"
+    sql = "select * from dayservice limit 10"
     cur.execute(sql)
     result_service = cur.fetchall()
-    sql = "select * from areafrom"
+    sql = "select * from areafrom limit 10"
     cur.execute(sql)
     result_area = cur.fetchall()
     db.close()
