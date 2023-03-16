@@ -2,35 +2,6 @@
 <html lang="en">
 <head>
 {% include '/menu/header.html' %}
-    <script>
-        $(document).ready(function () {
-            $('#foo-table').DataTable({
-             "pageLength":20,
-             "destroy":true,
-             "order":[2,'desc'],
-                initComplete: function () {
-                this.api()
-                .columns('.showMenu')
-                .every(function () {
-                    var column = this;
-                    var select = $('<select class="form-control"><option value=""></option></select>')
-                        .appendTo($(column.header()).empty())
-                        .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                            column.search(val ? '^' + val + '$' : '', true, false).draw();
-                        });
-                     column
-                        .data()
-                        .unique()
-                        .sort()
-                        .each(function (d, j) {
-                             select.append('<option value="' + d + '">' + d + '</option>');
-                        });
-                });
-        },
-        });
-        });
-    </script>
 </head>
 <body>
     <div id="commonTopHeader">
@@ -43,15 +14,88 @@
 
         <div id="commonContent">
             <div class="container">
-<hr>
+            <hr>
              <div>
-                <div style ="float:left;width:30%;padding: 15px">
-                   CPU : {{result_cpu}}
-                    Memory : {{result_mem }}
+                 <div class="chartContents">
+                     <div>
+                        <div>CPU : {{result_cpu}}, Memory : {{result_mem }}</div>
+                        <canvas id="cpuChart" width="500" height="100"></canvas>
+                    </div>
+                    <div>
+                        <div>Disk : {{result_disk}}</div>
+                        <canvas id="diskChart" width="500" height="100"></canvas>
+                    </div>
                 </div>
              </div>
             </div>
         </div>
     </div>
 </body>
+<script>
+    $(document).ready(function () {
+        cpuChartSet();
+        diskChartSet();
+    });
+
+    function cpuChartSet(){
+        let cpuChart = document.getElementById("cpuChart").getContext('2d');
+        // let cpuNum = {{result_cpu|tojson}};
+        let memoryNum = {{result_mem|tojson}};
+
+        new Chart(cpuChart, {
+            type: "doughnut",
+            data: {
+                labels: ["CPU", "MEMORY"],
+                datasets: [
+                    {
+                        data: [100 - memoryNum, memoryNum],
+                        backgroundColor: [
+                            "#95c1e6",
+                            "#ff5377"
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+
+    function diskChartSet(){
+        let diskChart = document.getElementById("diskChart").getContext('2d');
+        let disk = {{result_disk|tojson}};
+
+        new Chart(diskChart, {
+            type: "doughnut",
+            data: {
+                labels: ["disk"],
+                datasets: [
+                    {
+                        data: [disk[3], 100 - disk[3]],
+                        backgroundColor: [
+                            "#ff5377",
+                            "#95c1e6"
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+</script>
 </html>

@@ -8,7 +8,6 @@ import datetime
 import os
 import psutil
 
-
 db=None
 cur=None
 app = Flask(__name__)
@@ -576,7 +575,8 @@ def cpustat():
     cpu_usage = os.popen("ps aux | grep " + str(pid) + " | grep -v grep | awk '{print $3}'").read()
     cpu_usage = cpu_usage.replace("\n", "")
     memory_usage = round(py.memory_info()[0] / 2. ** 30, 2)
-    return render_template("stat/dashcpu.html", result_cpu = cpu_usage,result_mem = memory_usage )
+    result_disk = psutil.disk_usage(os.getcwd())
+    return render_template("stat/dashcpu.html", result_cpu = cpu_usage,result_mem = memory_usage,result_disk = result_disk )
 @app.route('/subm/disk')  # 요청
 def diskstat():
     result_disk = psutil.disk_usage(os.getcwd())
