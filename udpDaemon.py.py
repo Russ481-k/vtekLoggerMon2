@@ -3,7 +3,6 @@ import socket
 import numpy as np
 import pymysql
 
-
 db =None
 cur = None
 db = pymysql.connect(host='localhost', user='swcore', password='core2020', db='logger', charset='utf8')
@@ -34,12 +33,15 @@ while True:
         else:
             sqlv = sqlv + "'" + rline[i] + "',"
             txtv = txtv + 'd' +str('{0:03}'.format(i+1)) + ','
-    try:
-        cur = db.cursor()
-        sql = f"INSERT INTO logger.inoutT " +"("+ txtv +")"+ f" VALUES "+"("+ sqlv +")"
-        cur.execute(sql)
-        db.commit()
-        cnt += 1
-        print(cnt)
-    except pymysql.err.InternalError as e:
-        code, msg = e.args
+    if rline[3] == "SYSTEM":
+        pass
+    else:
+        try:
+            cur = db.cursor()
+            sql = f"INSERT INTO logger.inoutT " +"("+ txtv +")"+ f" VALUES "+"("+ sqlv +")"
+            cur.execute(sql)
+            db.commit()
+            cnt += 1
+            print(cnt)
+        except pymysql.err.InternalError as e:
+            code, msg = e.args
