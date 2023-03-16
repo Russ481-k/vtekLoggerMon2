@@ -1,3 +1,4 @@
+
 import socket
 import numpy as np
 import pymysql
@@ -19,12 +20,12 @@ while True:
     data_size = 1024
     data, sender = sock.recvfrom(data_size)
     strdata = str(data,'utf-8')
-    print(strdata)
+    strdata.strip("'")
+    strdata.strip('"')
     rline=[]
     txtv=''
     sqlv=''
     lc = len(strdata.split(','))
-    print(lc)
     for i in range(0,lc):
         rline = np.append(rline, np.array([strdata.split(',')[i]]))
         if i== lc-1:
@@ -33,8 +34,12 @@ while True:
         else:
             sqlv = sqlv + "'" + rline[i] + "',"
             txtv = txtv + 'd' +str('{0:03}'.format(i+1)) + ','
-    cur = db.cursor()
-    sql = f"INSERT INTO logger.inoutT " +"("+ txtv +")"+ f" VALUES "+"("+ sqlv +")"
-    cur.execute(sql)
-    print(sql)
-    db.commit()
+    try:
+        cur = db.cursor()
+        sql = f"INSERT INTO logger.inoutT " +"("+ txtv +")"+ f" VALUES "+"("+ sqlv +")"
+        cur.execute(sql)
+        db.commit()
+        cnt += 1
+        print(cnt)
+    except pymysql.err.InternalError as e:
+        code, msg = e.args
