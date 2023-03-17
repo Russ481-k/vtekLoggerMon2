@@ -1,3 +1,3 @@
 import os
 
-os.system('nohup sudo python3 /home/djkim/vtekLogger/vtekLoggerMon2/app.py&')
+os.system('nohup sudo python3 /home/djkim/logger/vtekLoggerMon2/app.py&')

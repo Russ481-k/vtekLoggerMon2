@@ -89,7 +89,7 @@ def mnu002f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("THRE")
         return render_template('./subm/mnu002.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -103,7 +103,7 @@ def mnu002f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("THRE")
         return render_template("./subm/mnu002.html", result = result, cond = cond)
     
 @app.route('/subm/mnu003', methods=['GET', 'POST'])
@@ -122,7 +122,7 @@ def mnu003f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("URLF")
         return render_template('./subm/mnu003.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -136,7 +136,7 @@ def mnu003f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("URLF")
         return render_template("./subm/mnu003.html", result = result, cond = cond)
     
 @app.route('/subm/mnu004', methods=['GET', 'POST'])
@@ -155,7 +155,7 @@ def mnu004f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("WILD")
         return render_template('./subm/mnu004.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -169,7 +169,7 @@ def mnu004f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("WILD")
         return render_template("./subm/mnu004.html", result = result, cond = cond)
     
 @app.route('/subm/mnu005', methods=['GET', 'POST'])
@@ -188,7 +188,7 @@ def mnu005f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("DATA")
         return render_template('./subm/mnu005.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -202,7 +202,7 @@ def mnu005f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("DATA")
         return render_template("./subm/mnu005.html", result = result, cond = cond)
     
 @app.route('/subm/mnu006', methods=['GET', 'POST'])
@@ -221,7 +221,7 @@ def mnu006f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("HIPM")
         return render_template('./subm/mnu006.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -235,7 +235,7 @@ def mnu006f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("HIPM")
         return render_template("./subm/mnu006.html", result = result, cond = cond)
     
 @app.route('/subm/mnu007', methods=['GET', 'POST'])
@@ -254,7 +254,7 @@ def mnu007f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("GLOB")
         return render_template('./subm/mnu007.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -268,7 +268,7 @@ def mnu007f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("GLOB")
         return render_template("./subm/mnu007.html", result = result, cond = cond)
     
 @app.route('/subm/mnu008', methods=['GET', 'POST'])
@@ -287,7 +287,7 @@ def mnu008f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("IPTA")
         return render_template('./subm/mnu008.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -301,7 +301,7 @@ def mnu008f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("IPTA")
         return render_template("./subm/mnu008.html", result = result, cond = cond)
     
 @app.route('/subm/mnu009', methods=['GET', 'POST'])
@@ -320,7 +320,7 @@ def mnu009f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("USER")
         return render_template('./subm/mnu009.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -334,7 +334,7 @@ def mnu009f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("USER")
         return render_template("./subm/mnu009.html", result = result, cond = cond)
     
 @app.route('/subm/mnu010', methods=['GET', 'POST'])
@@ -353,7 +353,7 @@ def mnu010f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("DESC")
         return render_template('./subm/mnu010.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -367,7 +367,7 @@ def mnu010f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("DESC")
         return render_template("./subm/mnu010.html", result = result, cond = cond)
     
 @app.route('/subm/mnu011', methods=['GET', 'POST'])
@@ -386,7 +386,7 @@ def mnu011f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("TUNN")
         return render_template('./subm/mnu011.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -400,7 +400,7 @@ def mnu011f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("TUNN")
         return render_template("./subm/mnu011.html", result = result, cond = cond)
     
 @app.route('/subm/mnu012', methods=['GET', 'POST'])
@@ -419,7 +419,7 @@ def mnu012f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("CONF")
         return render_template('./subm/mnu012.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -433,7 +433,7 @@ def mnu012f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("CONF")
         return render_template("./subm/mnu012.html", result = result, cond = cond)
     
 @app.route('/subm/mnu013', methods=['GET', 'POST'])
@@ -452,7 +452,7 @@ def mnu013f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("SYST")
         return render_template('./subm/mnu013.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -466,7 +466,7 @@ def mnu013f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("SYST")
         return render_template("./subm/mnu013.html", result = result, cond = cond)
     
 @app.route('/subm/mnu014', methods=['GET', 'POST'])
@@ -485,7 +485,7 @@ def mnu014f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("ALAR")
         return render_template('./subm/mnu014.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -499,7 +499,7 @@ def mnu014f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("ALAR")
         return render_template("./subm/mnu014.html", result = result, cond = cond)
     
 @app.route('/subm/mnu015', methods=['GET', 'POST'])
@@ -518,7 +518,7 @@ def mnu015f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("AUTH")
         return render_template('./subm/mnu015.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -532,7 +532,7 @@ def mnu015f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("AUTH")
         return render_template("./subm/mnu015.html", result = result, cond = cond)
 
 @app.route('/subm/mnu016', methods=['GET', 'POST'])
@@ -551,7 +551,7 @@ def mnu016f():
         print(datto)
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("UNIF")
         return render_template('./subm/mnu016.html', result = result, cond = cond)
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
@@ -565,7 +565,7 @@ def mnu016f():
             datto = curr
         print(wherecon)
         result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("TRAF")
+        cond = dbconn.menuSet("UNIF")
         return render_template("./subm/mnu016.html", result = result, cond = cond)
 
 @app.route('/subm/cpu')  # 요청
