@@ -95,6 +95,29 @@ table > thead > tr:first-child > th{
     overflow: hidden;
 }
 
+#commonContent > form{
+    background-color: #fff;
+}
+
+#commonContent > form > .menuCustomHeader{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+#commonContent > form > .menuCustomHeader > div:nth-child(1){
+    width: 100%;
+}
+
+#commonContent > form > .menuCustomHeader > div:nth-child(1) > span{
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+#commonContent > form > .menuCustomHeader > .menuSelectContent{
+    padding-right: 10px;
+}
+
 #commonContent>div {
     width: 100%;
     background: #fff;
