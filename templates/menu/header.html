@@ -107,13 +107,20 @@
             });
 
             setTimeout(() => {
-                if(localStorage.getItem("searchFlag") || localStorage.getItem("searchFlag") !== undefined){
+                if(localStorage.getItem("searchFlag") && localStorage.getItem("searchFlag") !== null){
                     datas.datefrom = $("#datefrom").val();
                     datas.timefrom = $("#timefrom").val();
                     datas.dateto = $("#dateto").val();
                     datas.datetimetofrom = $("#timeto").val();
                     datas.whereplus = $("#whereplus").val();
+                    localStorage.clear();
+                }else{
+                    $("#timefrom").val("00:00");
+                    $("#timeto").val("23:59");
+                    datas.datefrom = "";
+                    datas.dateto = "";
                 }
+
 
                 $(window).resize(function() {
                     $('.dataTables_scrollBody').css('height', ($(window).height() - 200));

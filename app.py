@@ -29,11 +29,19 @@ def mnujson():
         wherecon = request.args.get("whereplus")
     else:
         wherecon = ''
-    if datfr == '':
+        
+    print(request.args.get("datefrom"));
+    if request.args.get("datefrom") == '':
         datfr = curr - datetime.timedelta(minutes=5)
         datfr = datfr.strftime('%Y-%m-%d %H:%M')
-    if datto == '':
+    else : 
+        datfr = request.args.get("datefrom") + " " + request.args.get("timefrom")
+        
+    if request.args.get("dateto") == '':
         datto = curr.strftime('%Y-%m-%d %H:%M')
+    else :
+        datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom")
+        
     resultlength = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), draw, pageLength)
     resultData = {
@@ -706,5 +714,25 @@ def logout():
     session.clear()
     return render_template('./login/login.html')
 
+@app.route('/userAdd', methods=['GET', 'POST'])
+def userAdd():
+    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    cur = db.cursor()
+    
+    if request.method == 'GET':
+        sql1 = "select * from userAccount"
+        cur.execute(sql1)
+        cond = cur.fetchall()
+        db.close()
+        return render_template("menu/userAdd.html", cond=cond)
+    else:
+        print(request.args);
+        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (" + str(request.args.get("userId")) + ", " + str(request.args.get("userName")) + ", " + str(request.args.get("userPasswd")) + ", " + str(request.args.get("userEmail")) + ", 1111111111, ADMIN, 10000)" 
+        cur.execute(sql1)
+        cond = cur.fetchall()
+        db.close()
+        return render_template("menu/userAdd.html")
+
 if __name__ == '__main__':
     app.run(debug=True, port=80, host='0.0.0.0')
+    

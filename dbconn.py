@@ -32,10 +32,8 @@ def fromtoTraffic(datfr, datto, wherecon):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        datfr = datfr+'%'
-        datto = datto+'%'
         sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon
-        cursor.execute(sql, (datfr, datto))
+        cursor.execute(sql, (str(datfr), str(datto)))
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)
@@ -55,13 +53,10 @@ def fromtoTrafficLimit(datfr, datto, wherecon, draw, pageLength):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        datfr = datfr+'%'
-        datto = datto+'%'
         firstLimit = (int(draw) - int(1)) * int(pageLength)
         lastLimit = int(pageLength)
-        print("SELECT * FROM inoutT WHERE d002 between " + str(datfr) + " AND " + str(datto) + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit))
         sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit)
-        cursor.execute(sql, (datfr, datto))
+        cursor.execute(sql, (str(datfr), str(datto)))
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)

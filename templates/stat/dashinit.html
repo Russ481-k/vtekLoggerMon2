@@ -2,35 +2,6 @@
 <html lang="en">
 <head>
 {% include '/menu/header.html' %}
-    <script>
-        $(document).ready(function () {
-            $('#foo-table').DataTable({
-             "pageLength":20,
-             "destroy":true,
-             "order":[2,'desc'],
-                initComplete: function () {
-                this.api()
-                .columns('.showMenu')
-                .every(function () {
-                    var column = this;
-                    var select = $('<select class="form-control"><option value=""></option></select>')
-                        .appendTo($(column.header()).empty())
-                        .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                            column.search(val ? '^' + val + '$' : '', true, false).draw();
-                        });
-                     column
-                        .data()
-                        .unique()
-                        .sort()
-                        .each(function (d, j) {
-                             select.append('<option value="' + d + '">' + d + '</option>');
-                        });
-                });
-        },
-        });
-        });
-    </script>
 </head>
 <body>
     <div id="commonTopHeader">
@@ -43,51 +14,116 @@
 
         <div id="commonContent">
             <div class="container">
-<hr>
+            <hr>
              <div>
-                <div style ="float:left;width:30%;padding: 15px">
-                   <table id="service-table" class="table table-striped table-bordered" style="width:100%;padding: 5px">
-                        <thead>
-                            <tr style="text-align: center">
-                            <td>Service</td>
-                            <td>Count</td>
-                            <td>%</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in result %}
-                            <tr>
-                            <td>{{i[0]}}</td>
-                            <td style="text-align: right">{{i[1]}}</td>
-                            <td style="text-align: right">{{i[2]}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                   </table>
-                </div>
-                <div style ="float:left;width:30%;padding: 15px">
-                   <table id="area-table" class="table table-striped table-bordered" style="width:100%;padding: 5px">
-                        <thead>
-                            <tr style="text-align: center">
-                            <td>Area</td>
-                            <td>Count</td>
-                            <td>%</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in area %}
-                            <tr>
-                            <td>{{i[0]}}</td>
-                            <td style="text-align: right">{{i[1]}}</td>
-                            <td style="text-align: right">{{i[2]}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                   </table>
+                <div class="chartContents">
+                    <div>
+                        <canvas id="serviceChart" width="500" height="100"></canvas>
+                    </div>
+                    <div>
+                        <canvas id="areaChart" width="500" height="100"></canvas>
+                    </div>
                 </div>
              </div>
             </div>
         </div>
     </div>
 </body>
+<script>
+    $(document).ready(function () {
+        serviceChartSet();
+        areaChartSet();
+    });
+
+    function serviceChartSet(){
+        let serviceChart = document.getElementById("serviceChart").getContext('2d');
+        let resultArr = {{result|tojson}};
+        let labelArr = [];
+        let dataArr = [];
+
+        for(let i = 0; i < resultArr.length; i++){
+            labelArr.push(resultArr[i][0]);
+            dataArr.push(resultArr[i][2]);
+        }
+
+        new Chart(serviceChart, {
+            type: "doughnut",
+            data: {
+                labels: labelArr,
+                datasets: [
+                    {
+                        data: dataArr,
+                        backgroundColor: [
+                            "#FFA7A7",
+                            "#FFE08C",
+                            "#CEF279",
+                            "#B2EBF4",
+                            "#B5B2FF",
+                            "#FFB2F5",
+                            "#D5D5D5",
+                            "#FFC19E",
+                            "#FAED7D",
+                            "#B7F0B1",
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+
+    function areaChartSet(){
+        let areaChart = document.getElementById("areaChart").getContext('2d');
+        let areaArr = {{area|tojson}};
+        let labelArr = [];
+        let dataArr = [];
+
+        for(let i = 0; i < areaArr.length; i++){
+            labelArr.push(areaArr[i][0]);
+            dataArr.push(areaArr[i][2]);
+        }
+
+
+        new Chart(areaChart, {
+            type: "doughnut",
+            data: {
+                labels: labelArr,
+                datasets: [
+                    {
+                        data: dataArr,
+                        backgroundColor: [
+                            "#FFA7A7",
+                            "#FFE08C",
+                            "#CEF279",
+                            "#B2EBF4",
+                            "#B5B2FF",
+                            "#FFB2F5",
+                            "#D5D5D5",
+                            "#FFC19E",
+                            "#FAED7D",
+                            "#B7F0B1",
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+</script>
 </html>

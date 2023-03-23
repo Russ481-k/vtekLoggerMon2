@@ -4,10 +4,10 @@
           <div>
               <div class="DateFrom">시작시간: </div>
               <input type="date" id="datefrom" name="datefrom" class="setdate">
-              <input type="time" id="timefrom" name="timefrom"value="11:50:00">
+              <input type="time" id="timefrom" name="timefrom">
               <div class="DateTo">종료시간: </div>
               <input type="date" id="dateto" name="dateto"class="setdate">
-              <input type="time" id="timeto" name="timeto" value="12:00:00">
+              <input type="time" id="timeto" name="timeto">
           </div>
           <div>
               <img src="/static/images/magnifier.png" />
@@ -19,16 +19,30 @@
 </div>
 <script>
   $(window).ready(function(){
-      if(localStorage.getItem("setSearchText") !== undefined){
-        $("#whereplus").val(localStorage.getItem("setSearchText"));
-        localStorage.clear();
+      if(localStorage.getItem("setSearchDateFrom") !== null){
+        let splitStr = localStorage.getItem("setSearchDateFrom").split(" ");
+        $("#datefrom").val(splitStr[0]);
+        $("#timefrom").val(splitStr[1]);
+      }else{
+        $("#datefrom").val(new Date().toISOString().slice(0, 10));
       }
 
-      document.getElementById('datefrom').value= new Date().toISOString().slice(0, 10);
-      document.getElementById('dateto').value= new Date().toISOString().slice(0, 10);
-  });
+      if(localStorage.getItem("setSearchDateTo") !== null){
+        let splitStr = localStorage.getItem("setSearchDateTo").split(" ");
+        $("#dateto").val(splitStr[0]);
+        $("#timeto").val(splitStr[1]);
+      }else{
+        $("#dateto").val(new Date().toISOString().slice(0, 10));
+      }
+
+      if(localStorage.getItem("setSearchText") !== null){
+        $("#whereplus").val(localStorage.getItem("setSearchText"));
+      }
+    });
 
   function searchSubmit(){
+      localStorage.setItem("setSearchDateFrom", $("#datefrom").val() + " " + $("#timefrom").val());
+      localStorage.setItem("setSearchDateTo", $("#dateto").val() + " " + $("#timeto").val());
       localStorage.setItem("setSearchText", $("#whereplus").val());
       localStorage.setItem("searchFlag", true);
       location.reload();
