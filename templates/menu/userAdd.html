@@ -68,21 +68,19 @@
                 <table id="foo-table" class="table table-striped table-bordered nowrap overflow-auto">
                     <thead>
                         <tr>
-                            {% for k in cond %}
                             <th>아이디</th>
                             <th>이름</th>
                             <th>이메일</th>
-                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
+                        {% for k in cond %}
                         <tr>
-                            {% for k in cond %}
                             <td>{{k[1]}}</td>
                             <td>{{k[2]}}</td>
                             <td>{{k[4]}}</td>
-                            {% endfor %}
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -101,6 +99,10 @@
             "url": "/userAdd",
             "method": "post",
             "data": datas,
+            "success": function(){
+                alert("등록되었습니다.");
+                location.reload();
+            }
         })
     }
 </script>
