@@ -121,7 +121,6 @@
                     datas.dateto = "";
                 }
 
-
                 $(window).resize(function() {
                     $('.dataTables_scrollBody').css('height', ($(window).height() - 200));
                 });
@@ -129,6 +128,7 @@
                 $('#foo-table').DataTable({
                     "searching": false,
                     "info": false,
+                    "scrollX": true,
                     "scrollY": ($(window).height() - 230),
                     "destroy":true,
                     "dom": 't<"bottom"lp>',
