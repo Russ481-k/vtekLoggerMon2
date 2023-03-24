@@ -726,9 +726,9 @@ def userAdd():
         db.close()
         return render_template("menu/userAdd.html", cond=cond)
     else:
-        print(request.args);
-        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (" + str(request.args.get("userId")) + ", " + str(request.args.get("userName")) + ", " + str(request.args.get("userPasswd")) + ", " + str(request.args.get("userEmail")) + ", 1111111111, ADMIN, 10000)" 
-        cur.execute(sql1)
+        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (%s, %s, %s, %s, %s, %s, %s)" 
+        cur.execute(sql1, (str(request.form.get("userId")), str(request.form.get("userName")), str(request.form.get("userPasswd")), str(request.form.get("userEmail")), str("1111111111"), str("ADMIN"), str("10000")))
+        db.commit()
         cond = cur.fetchall()
         db.close()
         return render_template("menu/userAdd.html")
