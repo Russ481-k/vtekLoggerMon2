@@ -1,6 +1,6 @@
 <div class="topSearchWrap">
   <div>
-      <form class="search">
+      <form class="search" onsubmit="return false;">
           <div>
               <div class="DateFrom">시작시간: </div>
               <input type="date" id="datefrom" name="datefrom" class="setdate">
@@ -38,7 +38,7 @@
       if(localStorage.getItem("setSearchText") !== null){
         $("#whereplus").val(localStorage.getItem("setSearchText"));
       }
-    });
+  });
 
   function searchSubmit(){
       localStorage.setItem("setSearchDateFrom", $("#datefrom").val() + " " + $("#timefrom").val());

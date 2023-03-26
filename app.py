@@ -22,7 +22,7 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
-    draw = request.args.get("draw")
+    draw = request.args.get("start")
     pageLength = request.args.get("length")
     
     if(request.args.get("whereplus") != None):
@@ -30,7 +30,6 @@ def mnujson():
     else:
         wherecon = ''
         
-    print(request.args.get("datefrom"));
     if request.args.get("datefrom") == '':
         datfr = curr - datetime.timedelta(minutes=5)
         datfr = datfr.strftime('%Y-%m-%d %H:%M')

@@ -53,9 +53,10 @@ def fromtoTrafficLimit(datfr, datto, wherecon, draw, pageLength):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        firstLimit = (int(draw) - int(1)) * int(pageLength)
+        firstLimit = int(draw)
         lastLimit = int(pageLength)
         sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit)
+        print(sql)
         cursor.execute(sql, (str(datfr), str(datto)))
         rows = cursor.fetchall()
     except Exception as e:

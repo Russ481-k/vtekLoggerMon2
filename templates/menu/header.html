@@ -115,8 +115,9 @@
                     datas.whereplus = $("#whereplus").val();
                     localStorage.clear();
                 }else{
-                    $("#timefrom").val("00:00");
-                    $("#timeto").val("23:59");
+                    let nowDate = new Date();
+                    $("#timefrom").val(nowDate.getHours() + ":" + (nowDate.getMinutes() - 5));
+                    $("#timeto").val(nowDate.getHours() + ":" + nowDate.getMinutes());
                     datas.datefrom = "";
                     datas.dateto = "";
                 }
