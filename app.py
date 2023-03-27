@@ -581,10 +581,8 @@ def cpustat():
     py = psutil.Process(pid)
     # cpu_usage = os.popen("ps aux | grep " + str(pid) + " | grep -v grep | awk '{print $3}'").read()
     # cpu_usage = cpu_usage.replace("\n", "")
-    print(psutil.virtual_memory())
-    memory_usage = round(py.memory_info()[0] / 2. ** 30, 2)
+    # memory_usage = round(py.memory_info()[0] / 2. ** 30, 2)
     result_disk = psutil.disk_usage(os.getcwd())
-    print(result_disk)
     return render_template("stat/dashcpu.html", cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk )
 @app.route('/subm/disk')  # 요청
 def diskstat():
