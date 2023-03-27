@@ -18,6 +18,10 @@
     .chartContents > div:first-child{
         margin-right: 20px;
     }
+
+    .chartContents > div:nth-child(2){
+        margin-right: 20px;
+    }
 </style>
 </head>
 <body>
@@ -35,11 +39,15 @@
                 <div>
                     <div class="chartContents">
                         <div>
-                            <!-- <div>CPU : {{result_cpu}}, Memory : {{result_mem }}</div> -->
+                            <div>CPU</div> 
                             <canvas id="cpuChart" width="400"></canvas>
                         </div>
                         <div>
-                            <!-- <div>Disk : {{result_disk}}</div> -->
+                            <div>MEMORY</div>
+                            <canvas id="memoryChart" width="400"></canvas>
+                        </div>
+                        <div>
+                            <div>DISK</div>
                             <canvas id="diskChart" width="400"></canvas>
                         </div>
                     </div>
@@ -51,21 +59,55 @@
 <script>
     $(document).ready(function () {
         cpuChartSet();
+        memoryChartSet();
         diskChartSet();
     });
 
     function cpuChartSet(){
         let cpuChart = document.getElementById("cpuChart").getContext('2d');
-        // let cpuNum = {{result_cpu|tojson}};
-        let memoryNum = {{result_mem|tojson}};
+        let cpu_remain = {{cpu_remain|tojson}};
+        let cpu_percent = {{cpu_percent|tojson}};
 
         new Chart(cpuChart, {
             type: "doughnut",
             data: {
-                labels: ["CPU", "MEMORY"],
+                labels: ["used", "free"],
                 datasets: [
                     {
-                        data: [100 - memoryNum, memoryNum],
+                        data: [cpu_remain, cpu_percent],
+                        backgroundColor: [
+                            "#95c1e6",
+                            "#ff5377"
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+
+    function memoryChartSet(){
+        let memoryChart = document.getElementById("memoryChart").getContext('2d');
+        let memory = {{result_mem|tojson}};
+        memory[3] = memory[3] / memory[0] * 100;
+        memory[4] = memory[4] / memory[0] * 100;
+
+        new Chart(memoryChart, {
+            type: "doughnut",
+            data: {
+                labels: ["used", "free"],
+                datasets: [
+                    {
+                        data: [(memory[3]).toFixed(2), (memory[4]).toFixed(2)],
                         backgroundColor: [
                             "#95c1e6",
                             "#ff5377"
@@ -93,13 +135,13 @@
         new Chart(diskChart, {
             type: "doughnut",
             data: {
-                labels: ["disk", "remain"],
+                labels: ["used", "free"],
                 datasets: [
                     {
-                        data: [disk[3], (100 - disk[3]).toFixed(1)],
+                        data: [(100 - disk[3]).toFixed(1), disk[3]],
                         backgroundColor: [
-                            "#ff5377",
-                            "#95c1e6"
+                            "#95c1e6",
+                            "#ff5377"
                         ],
                         radius:0,
                         borderWidth: 1,
