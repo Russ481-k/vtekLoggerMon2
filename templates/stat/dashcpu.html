@@ -76,8 +76,8 @@
                     {
                         data: [cpu_remain, cpu_percent],
                         backgroundColor: [
-                            "#95c1e6",
-                            "#ff5377"
+                            "#ff5377",
+                            "#95c1e6"
                         ],
                         radius:0,
                         borderWidth: 1,
@@ -109,8 +109,8 @@
                     {
                         data: [(memory[3]).toFixed(2), (memory[4]).toFixed(2)],
                         backgroundColor: [
-                            "#95c1e6",
-                            "#ff5377"
+                            "#ff5377",
+                            "#95c1e6"
                         ],
                         radius:0,
                         borderWidth: 1,
@@ -131,6 +131,8 @@
     function diskChartSet(){
         let diskChart = document.getElementById("diskChart").getContext('2d');
         let disk = {{result_disk|tojson}};
+        disk[1] = disk[1] / disk[0] * 100;
+        disk[2] = disk[2] / disk[0] * 100;
 
         new Chart(diskChart, {
             type: "doughnut",
@@ -138,10 +140,10 @@
                 labels: ["used", "free"],
                 datasets: [
                     {
-                        data: [(100 - disk[3]).toFixed(1), disk[3]],
+                        data: [(disk[1]).toFixed(2), (disk[2]).toFixed(2)],
                         backgroundColor: [
-                            "#95c1e6",
-                            "#ff5377"
+                            "#ff5377",
+                            "#95c1e6"
                         ],
                         radius:0,
                         borderWidth: 1,
