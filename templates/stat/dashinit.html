@@ -2,6 +2,24 @@
 <html lang="en">
 <head>
 {% include '/menu/header.html' %}
+<style>
+    .chartContents{
+        display: flex;
+        align-items: center;
+    }
+
+    .chartContents > div{
+        border: 1px solid #BDBDBD;
+        padding: 10px;
+        box-shadow: 1px solid #BDBDBD;
+        box-shadow: 3px 3px 3px 3px #BDBDBD;
+    }
+
+    .chartContents > div:first-child{
+        margin-right: 20px;
+    }
+
+</style>
 </head>
 <body>
     <div id="commonTopHeader">
@@ -18,10 +36,10 @@
              <div>
                 <div class="chartContents">
                     <div>
-                        <canvas id="serviceChart" width="500" height="100"></canvas>
+                        <canvas id="serviceChart" width="400"></canvas>
                     </div>
                     <div>
-                        <canvas id="areaChart" width="500" height="100"></canvas>
+                        <canvas id="areaChart" width="400"></canvas>
                     </div>
                 </div>
              </div>
@@ -71,6 +89,7 @@
                 ],
             },
             options: {
+                responsive: false,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -117,6 +136,7 @@
                 ],
             },
             options: {
+                responsive: false,
                 scales: {
                     y: {
                         beginAtZero: true
