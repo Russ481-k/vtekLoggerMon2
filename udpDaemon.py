@@ -30,6 +30,11 @@ while True:
         if i== lc-1:
             sqlv = sqlv + "'" + rline[i] + "'"
             txtv = txtv + "d" + str('{0:03}'.format(i+1))
+        elif i==0:
+            slicestr = rline[0]
+            slicestr = slicestr[20:]
+            sqlv = sqlv + "'" + slicestr + "',"
+            txtv = txtv + "d" + str('{0:03}'.format(i + 1)) + ','
         else:
             sqlv = sqlv + "'" + rline[i] + "',"
             txtv = txtv + 'd' +str('{0:03}'.format(i+1)) + ','
