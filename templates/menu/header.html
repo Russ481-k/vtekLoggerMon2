@@ -55,6 +55,14 @@
         $(window).ready(function(){
             $("#loadingDiv").hide();
             $("#loadingDiv").loading("toggle");
+            $("html").on("keydown", function(e){
+                if(e.which==13){
+                    if(document.getElementsByClassName("search")[0] !== undefined){
+                        e.preventDefault();
+                        searchSubmit();
+                    }
+                }
+            });
         });
 
         function searchTextCol(e){
@@ -85,7 +93,7 @@
                     
                     if(cond[i].activeMenu === "d002"){
                         let getDate = dateConvert(data);
-                        valueData = getDate.getFullYear() + "-" + String((getDate.getMonth() + 1)).padStart(2, "0") + "-" + getDate.getDate() + " " + getDate.getHours() + ":" + getDate.getMinutes() + ":" + String(getDate.getSeconds()).padStart(2, "0");
+                        valueData = getDate.getFullYear() + "-" + String((getDate.getMonth() + 1)).padStart(2, "0") + "-" + String(getDate.getDate()).padStart(2, "0") + " " + getDate.getHours() + ":" + getDate.getMinutes() + ":" + String(getDate.getSeconds()).padStart(2, "0");
                     }else{
                         valueData = data;
                     }
@@ -116,14 +124,23 @@
                     localStorage.clear();
                 }else{
                     let nowDate = new Date();
-                    $("#timefrom").val(nowDate.getHours() + ":" + (nowDate.getMinutes() - 5));
-                    $("#timeto").val(nowDate.getHours() + ":" + nowDate.getMinutes());
+                    $("#timefrom").val(nowDate.getHours() + ":" + String((nowDate.getMinutes() - 5)).padStart(2, "0"));
+                    $("#timeto").val(nowDate.getHours() + ":" + String(nowDate.getMinutes()).padStart(2, "0"));
                     datas.datefrom = "";
                     datas.dateto = "";
                 }
 
+                if(localStorage.getItem("menuTitle") && localStorage.getItem("menuTitle") !== null){
+                    $("#csvExportBtn").attr("data-title", localStorage.getItem("menuTitle"));
+                    localStorage.removeItem("menuTitle");
+                }else{
+                    if($("#csvExportBtn").length > 0){
+                        $("#csvExportBtn").attr("data-title", "Monitoring");
+                    }
+                }
+
                 $(window).resize(function() {
-                    $('.dataTables_scrollBody').css('height', ($(window).height() - 200));
+                    $('.dataTables_scrollBody').css('height', ($(window).height() - 180));
                 });
 
                 $('#foo-table').DataTable({
@@ -131,16 +148,13 @@
                     "info": false,
                     "scrollX": true,
                     "scrollY": ($(window).height() - 230),
-                    "destroy":true,
                     "dom": 't<"bottom"lp>',
-                    "order": [0, "desc"],
+                    "order": [[1, "desc"]],
                     "processing": true,
                     "serverSide": true,
                     "ajax": {
                         "url": '/subm/mnujson',
                         "type": 'get',
-                        "contentType": "application/json",
-                        "dataType": 'json',
                         "data": datas,
                     },
                     "columns": dataArr,
@@ -157,5 +171,44 @@
             //let koreaTimeDiff = 9 * 60 * 60 * 1000;
             
             return new Date(utcDate);
+        }
+
+        function downloadCSV(thisEle) {
+            let fileName = $(thisEle).data("title") + ".csv";
+            let csv = convertNodeToCsvString();
+            let link = document.createElement("a");
+            let blob = new Blob(["\uFEFF" + csv], {type: 'text/csv; charset=utf-8'});
+            let url = URL.createObjectURL(blob);
+
+            $(link).attr({"download" : fileName , "href" : url});
+            link.click();
+        }
+    
+        function convertNodeToCsvString() {
+            let result = "";
+            let node = $("#foo-table thead tr").children();
+            let nodeIndex = 0;
+
+            $(node).each(function (index, value) {
+                result += $(value).text() + ",";
+                nodeIndex++;
+            })
+
+            result += "\n";
+    
+            let itemNodes = $("#foo-table tbody tr td");
+            $(itemNodes).each(function (index, value) {
+                if(index > 0 && index % nodeIndex == 0){
+                    result += "\n";
+                }
+                result += $(value).text().trim() + ",";
+            });
+
+            return result;
+        }
+
+        function pageMove(thisEle){
+            localStorage.setItem("menuTitle", $(thisEle).text());
+            location.href = $(thisEle).data("href");
         }
     </script>

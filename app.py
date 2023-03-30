@@ -22,8 +22,6 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
-    draw = request.args.get("start")
-    pageLength = request.args.get("length")
     
     if(request.args.get("whereplus") != None):
         wherecon = request.args.get("whereplus")
@@ -42,7 +40,7 @@ def mnujson():
         datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom")
         
     resultlength = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
-    result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), draw, pageLength)
+    result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
     resultData = {
         "data": result,
         "recordsTotal": len(resultlength),

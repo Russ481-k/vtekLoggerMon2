@@ -42,9 +42,15 @@ def fromtoTraffic(datfr, datto, wherecon):
             connection.close()
     return rows
 
-def fromtoTrafficLimit(datfr, datto, wherecon, draw, pageLength):
+def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     rows = None
     connection = None
+    draw = requests.get("start")
+    pageLength = requests.get("length")
+    rowIndex = requests.get("order[0][column]");
+    sort = requests.get("order[0][dir]");
+    rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
+    
     try:
         connection = my.connect(host='192.168.1.45',
                                 user='swcore',
@@ -55,7 +61,7 @@ def fromtoTrafficLimit(datfr, datto, wherecon, draw, pageLength):
         cursor = connection.cursor()
         firstLimit = int(draw)
         lastLimit = int(pageLength)
-        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " limit " + str(firstLimit) + ", " + str(lastLimit)
+        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " order by " + str(rowIndexColumn) + " " + str(sort) + " limit " + str(firstLimit) + ", " + str(lastLimit)
         print(sql)
         cursor.execute(sql, (str(datfr), str(datto)))
         rows = cursor.fetchall()
