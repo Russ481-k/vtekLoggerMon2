@@ -1,5 +1,5 @@
     <meta charset="UTF-8">
-    <title>PALO LOG ver 230213</title>
+    <title>PALO LOG ver 230331</title>
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
@@ -114,6 +114,7 @@
                 $(this).html('<input type="text" placeholder="' + title + '" />');
             });
 
+            
             setTimeout(() => {
                 if(localStorage.getItem("searchFlag") && localStorage.getItem("searchFlag") !== null){
                     datas.datefrom = $("#datefrom").val();
@@ -124,19 +125,18 @@
                     localStorage.clear();
                 }else{
                     let nowDate = new Date();
-                    $("#timefrom").val(nowDate.getHours() + ":" + String((nowDate.getMinutes() - 5)).padStart(2, "0"));
-                    $("#timeto").val(nowDate.getHours() + ":" + String(nowDate.getMinutes()).padStart(2, "0"));
+                    $("#timeto").val(String(nowDate.getHours()).padStart(2, "0") + ":" + String(nowDate.getMinutes()).padStart(2, "0"));
+
+                    if((nowDate.getMinutes() - 5) < 0){
+                        nowDate.setHours(nowDate.getHours() - 1);
+                        nowDate.setMinutes(60 - Math.abs(String((nowDate.getMinutes() - 5)).padStart(2, "0")));
+                        $("#timefrom").val(String(nowDate.getHours()).padStart(2, "0") + ":" + String(nowDate.getMinutes()).padStart(2, "0"));
+                    }else{
+                        $("#timefrom").val(String(nowDate.getHours()).padStart(2, "0") + ":" + String(nowDate.getMinutes() - 5).padStart(2, "0"));
+                    }
+
                     datas.datefrom = "";
                     datas.dateto = "";
-                }
-
-                if(localStorage.getItem("menuTitle") && localStorage.getItem("menuTitle") !== null){
-                    $("#csvExportBtn").attr("data-title", localStorage.getItem("menuTitle"));
-                    localStorage.removeItem("menuTitle");
-                }else{
-                    if($("#csvExportBtn").length > 0){
-                        $("#csvExportBtn").attr("data-title", "Monitoring");
-                    }
                 }
 
                 $(window).resize(function() {
@@ -162,7 +162,16 @@
                     "lengthMenu" : [10, 20, 30, 40, 50, 100],
                     "pageLength": 50,
                 });
-            }, 300)
+
+                if(localStorage.getItem("menuTitle") && localStorage.getItem("menuTitle") !== null){
+                    $("#csvExportBtn").attr("data-title", localStorage.getItem("menuTitle"));
+                    localStorage.removeItem("menuTitle");
+                }else{
+                    if($("#csvExportBtn").length > 0){
+                        $("#csvExportBtn").attr("data-title", "Monitoring");
+                    }
+                }
+            }, 300);
         }
 
         function dateConvert(date){
