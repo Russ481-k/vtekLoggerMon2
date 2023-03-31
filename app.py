@@ -680,7 +680,8 @@ def searchSel():
     cur.execute(sql)
     result_area = cur.fetchall()
     db.close()
-    return render_template("stat/dashinit.html", result=result_service, area = result_area)
+    result_disk = psutil.disk_usage(os.getcwd())
+    return render_template("stat/dashinit.html", result=result_service, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -733,4 +734,5 @@ def userAdd():
 if __name__ == '__main__':
     app.degub = True
     app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    # app.run(debug=True, port=80, host='0.0.0.0')
     
