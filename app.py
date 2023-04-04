@@ -39,7 +39,7 @@ def mnujson():
     else :
         datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom")
         
-    resultlength = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
     resultData = {
         "data": result,
@@ -732,7 +732,7 @@ def userAdd():
         return render_template("menu/userAdd.html")
 
 if __name__ == '__main__':
-    app.degub = True
-    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    # app.run(debug=True, port=80, host='0.0.0.0')
+    # app.degub = True
+    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    app.run(debug=True, port=80, host='0.0.0.0')
     
