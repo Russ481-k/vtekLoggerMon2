@@ -32,8 +32,9 @@ def fromtoTraffic(datfr, datto, wherecon):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon
-        cursor.execute(sql, (str(datfr), str(datto)))
+        sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto) + "'" + wherecon
+        print(sql)
+        cursor.execute(sql)
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)
@@ -50,7 +51,6 @@ def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     rowIndex = requests.get("order[0][column]");
     sort = requests.get("order[0][dir]");
     rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
-    
     try:
         connection = my.connect(host='192.168.1.45',
                                 user='swcore',
@@ -61,9 +61,9 @@ def fromtoTrafficLimit(datfr, datto, wherecon, requests):
         cursor = connection.cursor()
         firstLimit = int(draw)
         lastLimit = int(pageLength)
-        sql = "SELECT * FROM inoutT WHERE d002 between %s AND %s" + wherecon + " order by " + str(rowIndexColumn) + " " + str(sort) + " limit " + str(firstLimit) + ", " + str(lastLimit)
+        sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto)+ "'" + wherecon + " order by " + str(rowIndexColumn) + " " + str(sort) + " limit " + str(firstLimit) + ", " + str(lastLimit)
         print(sql)
-        cursor.execute(sql, (str(datfr), str(datto)))
+        cursor.execute(sql)
         rows = cursor.fetchall()
     except Exception as e:
         print('접속오류', e)

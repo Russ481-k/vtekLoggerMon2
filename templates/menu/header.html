@@ -83,17 +83,23 @@
         function pageDataSettings(result, cond){
             let dataArr = [];
             let datas = {};
+            let d002Index = 0;
 
             for(let i = 0; i < cond.length; i++){
                 let dataObj = {};
                 dataObj.data = cond[i].activeMenu;
+                
+                if(cond[i].activeMenu === "d002"){
+                    d002Index = i;
+                }
+
                 dataObj.render = function(data, type, row){
                     let dataFormat = Date.parse(data);
                     let valueData;
                     
                     if(cond[i].activeMenu === "d002"){
                         let getDate = dateConvert(data);
-                        valueData = getDate.getFullYear() + "-" + String((getDate.getMonth() + 1)).padStart(2, "0") + "-" + String(getDate.getDate()).padStart(2, "0") + " " + getDate.getHours() + ":" + getDate.getMinutes() + ":" + String(getDate.getSeconds()).padStart(2, "0");
+                        valueData = getDate.getFullYear() + "-" + String((getDate.getMonth() + 1)).padStart(2, "0") + "-" + String(getDate.getDate()).padStart(2, "0") + " " + String(getDate.getHours()).padStart(2, "0") + ":" + String(getDate.getMinutes()).padStart(2, "0") + ":" + String(getDate.getSeconds()).padStart(2, "0");
                     }else{
                         valueData = data;
                     }
@@ -114,7 +120,6 @@
                 $(this).html('<input type="text" placeholder="' + title + '" />');
             });
 
-            
             setTimeout(() => {
                 if(localStorage.getItem("searchFlag") && localStorage.getItem("searchFlag") !== null){
                     datas.datefrom = $("#datefrom").val();
@@ -135,13 +140,16 @@
                         $("#timefrom").val(String(nowDate.getHours()).padStart(2, "0") + ":" + String(nowDate.getMinutes() - 5).padStart(2, "0"));
                     }
 
-                    datas.datefrom = "";
-                    datas.dateto = "";
+                    datas.datefrom = $("#datefrom").val();
+                    datas.timefrom = $("#timefrom").val();
+                    datas.dateto = $("#dateto").val();
+                    datas.datetimetofrom = $("#timeto").val();
                 }
 
                 $(window).resize(function() {
                     $('.dataTables_scrollBody').css('height', ($(window).height() - 180));
                 });
+
 
                 $('#foo-table').DataTable({
                     "searching": false,
@@ -149,13 +157,28 @@
                     "scrollX": true,
                     "scrollY": ($(window).height() - 230),
                     "dom": 't<"bottom"lp>',
-                    "order": [[1, "desc"]],
                     "processing": true,
                     "serverSide": true,
+                    "order": [[d002Index, "desc"]],
                     "ajax": {
                         "url": '/subm/mnujson',
                         "type": 'get',
                         "data": datas,
+                        "beforeSend": function(){
+                            $("#loadingDiv").loading({
+                                onStart: function (loading) {
+                                    loading.overlay.fadeIn(1000);
+                                },
+                                onStop: function (loading) {
+                                    loading.overlay.fadeOut(1000);
+                                }
+                            });
+                        },
+                        
+                        "complete": function(){
+                            $("#loadingDiv").hide();
+                            $("#loadingDiv").loading("toggle");
+                        }
                     },
                     "columns": dataArr,
                     "lengthChange" : true, 
