@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 import os
 
 
+load_dotenv()
 db =None
 cur = None
-envhost = os.environ.get('envhost')
-envuser = os.environ.get('envuser')
-envpassword = os.environ.get('envpassword')
-envdb = os.environ.get('envdb')
-envcharset = os.environ.get('envcharset')
+envhost = os.getenv('envhost')
+envuser = os.getenv('envuser')
+envpassword = os.getenv('envpassword')
+envdb = os.getenv('envdb')
+envcharset = os.getenv('envcharset')
 db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
 
 # socket create

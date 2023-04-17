@@ -2,10 +2,13 @@ import pymysql as my
 import os
 from dotenv import load_dotenv
 
-envhost = os.environ.get('envhost')
-envuser = os.environ.get('envuser')
-envpassword = os.environ.get('envpassword')
-envdb = os.environ.get('envdb')
+load_dotenv()
+
+envhost = os.getenv('envhost')
+envuser = os.getenv('envuser')
+envpassword = os.getenv('envpassword')
+envdb = os.getenv('envdb')
+envcharset = os.getenv('envcharset')
 
 def selectUsers(uid, upw):
     row = None
