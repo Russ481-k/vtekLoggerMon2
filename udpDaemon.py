@@ -1,10 +1,18 @@
 import socket
 import numpy as np
 import pymysql
+from dotenv import load_dotenv
+import os
+
 
 db =None
 cur = None
-db = pymysql.connect(host='localhost', user='swcore', password='core2020', db='logger', charset='utf8')
+envhost = os.environ.get('envhost')
+envuser = os.environ.get('envuser')
+envpassword = os.environ.get('envpassword')
+envdb = os.environ.get('envdb')
+envcharset = os.environ.get('envcharset')
+db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
 
 # socket create
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -49,3 +57,4 @@ while True:
             print(cnt)
         except pymysql.err.InternalError as e:
             code, msg = e.args
+            pass

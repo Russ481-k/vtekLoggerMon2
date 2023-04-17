@@ -1,15 +1,20 @@
 import json
 from flask import Flask, jsonify, request, render_template, redirect , session
-
 import dbconn
 from dbconn import selectUsers
 import pymysql
 import datetime
 import os
 import psutil
+from dotenv import load_dotenv
 
 db=None
 cur=None
+envhost = os.environ.get('envhost')
+envuser = os.environ.get('envuser')
+envpassword = os.environ.get('envpassword')
+envdb = os.environ.get('envdb')
+
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
 
@@ -589,7 +594,7 @@ def diskstat():
 
 @app.route('/subm/network')  # 요청
 def networkstat():
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql = "select * from hBefore order by d002 desc limit 200"
     cur.execute(sql)
@@ -637,7 +642,7 @@ def menuset():
     else:
         selectValue = " and menuNo = '" + request.args.get("selectValue") + "'"
         
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql1 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where attrib not like '%XXX%'" + selectValue
     cur.execute(sql1)
@@ -648,7 +653,7 @@ def menuset():
 @app.route('/updatemenu', methods=['GET','POST'])
 def updatemenu():
     formtotal = request.form
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     mtitles = formtotal.getlist('mtitle')
     mkeys = formtotal.getlist('mkey')
@@ -671,7 +676,7 @@ def updatemenu():
 
 @app.route('/dashmain')  # 요청
 def searchSel():
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql = "select * from dayservice limit 10"
     cur.execute(sql)
@@ -714,7 +719,7 @@ def logout():
 
 @app.route('/userAdd', methods=['GET', 'POST'])
 def userAdd():
-    db = pymysql.connect(host='192.168.1.45', user='swcore', password='core2020', db='logger', charset='utf8')
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     
     if request.method == 'GET':

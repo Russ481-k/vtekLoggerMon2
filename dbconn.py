@@ -1,13 +1,20 @@
 import pymysql as my
+import os
+from dotenv import load_dotenv
+
+envhost = os.environ.get('envhost')
+envuser = os.environ.get('envuser')
+envpassword = os.environ.get('envpassword')
+envdb = os.environ.get('envdb')
 
 def selectUsers(uid, upw):
     row = None
     connection = None
     try:
-        connection = my.connect(host='192.168.1.45',
-                                user='swcore',
-                                password='core2020',
-                                database='logger',
+        connection = my.connect(host=envhost,
+                                user=envuser,
+                                password=envpassword,
+                                database=envdb,
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
@@ -25,10 +32,10 @@ def fromtoTraffic(datfr, datto, wherecon):
     rows = None
     connection = None
     try:
-        connection = my.connect(host='192.168.1.45',
-                                user='swcore',
-                                password='core2020',
-                                database='logger',
+        connection = my.connect(host=envhost,
+                                user=envuser,
+                                password=envpassword,
+                                database=envdb,
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
@@ -52,10 +59,10 @@ def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     sort = requests.get("order[0][dir]");
     rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
     try:
-        connection = my.connect(host='192.168.1.45',
-                                user='swcore',
-                                password='core2020',
-                                database='logger',
+        connection = my.connect(host=envhost,
+                                user=envuser,
+                                password=envpassword,
+                                database=envdb,
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
@@ -76,10 +83,10 @@ def menuSet(typ):
     rows = None
     connection = None
     try:
-        connection = my.connect(host='192.168.1.45',
-                                user='swcore',
-                                password='core2020',
-                                database='logger',
+        connection = my.connect(host=envhost,
+                                user=envuser,
+                                password=envpassword,
+                                database=envdb,
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
