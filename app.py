@@ -687,9 +687,15 @@ def searchSel():
     sql = "select * from areafrom limit 10"
     cur.execute(sql)
     result_area = cur.fetchall()
-    db.close()
     result_disk = psutil.disk_usage(os.getcwd())
-    return render_template("stat/dashinit.html", result=result_service, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk)
+    sql = "select * from monthcount order by d002 asc"
+    cur.execute(sql)
+    result_month = cur.fetchall()
+    sql = "select * from hourcount order by d002 asc"
+    cur.execute(sql)
+    result_hour = cur.fetchall()
+    db.close()
+    return render_template("stat/dashinit.html", result=result_service, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month, result_hour = result_hour)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -742,5 +748,5 @@ def userAdd():
 if __name__ == '__main__':
     # app.degub = True
     app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    #app.run(debug=True, port=80, host='0.0.0.0')
+    # app.run(debug=True, port=80, host='0.0.0.0')
     

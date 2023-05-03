@@ -55,8 +55,12 @@
                         <canvas id="memoryChart" width="375" height="400"></canvas>
                     </div>
                     <div>
-                        <div>DISK</div>
-                        <canvas id="diskChart" width="375" height="400"></canvas>
+                        <div>일별</div>
+                        <canvas id="monthChart" width="792" height="400"></canvas>
+                    </div>
+                    <div>
+                        <div>시간별</div>
+                        <canvas id="hourChart" width="792" height="400"></canvas>
                     </div>
                 </div>
                 <!--<div class="chartContents2">
@@ -84,7 +88,9 @@
         areaChartSet();
         cpuChartSet();
         memoryChartSet();
-        diskChartSet();
+        monthChartSet();
+        hourChartSet();
+        // diskChartSet();
     });
 
     function serviceChartSet(){
@@ -245,7 +251,40 @@
         });
     }
 
-    function diskChartSet(){
+    function memoryChartSet(){
+        let memoryChart = document.getElementById("memoryChart").getContext('2d');
+        let memory = {{result_mem|tojson}};
+        memory[3] = memory[3] / memory[0] * 100;
+        memory[4] = memory[4] / memory[0] * 100;
+
+        new Chart(memoryChart, {
+            type: "doughnut",
+            data: {
+                labels: ["used", "free"],
+                datasets: [
+                    {
+                        data: [(memory[3]).toFixed(2), (memory[4]).toFixed(2)],
+                        backgroundColor: [
+                            "#ff5377",
+                            "#95c1e6"
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+
+    /* function diskChartSet(){
         let diskChart = document.getElementById("diskChart").getContext('2d');
         let disk = {{result_disk|tojson}};
         disk[1] = disk[1] / disk[0] * 100;
@@ -274,6 +313,62 @@
                         beginAtZero: true
                     }
                 },
+            },
+        });
+    } */
+
+    function monthChartSet(){
+        let monthChart = document.getElementById("monthChart").getContext('2d');
+        let month = {{result_month|tojson}};
+        let dateArr = [];
+        let dataArr = [];
+
+        for(let i = 0; i < month.length; i++){
+            dateArr.push(month[i][0]);
+            dataArr.push(month[i][1]);
+        }
+
+        new Chart(monthChart, {
+            type: "bar",
+            data: {
+                labels: dateArr,
+                datasets: [
+                    {
+                        label: "일자별 데이터",
+                        data: dataArr,
+                        backgroundColor: "#86E57F",
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+        });
+    }
+
+    function hourChartSet(){
+        let hourChart = document.getElementById("hourChart").getContext('2d');
+        let hour = {{result_hour|tojson}};
+        let dateArr = [];
+        let dataArr = [];
+
+        for(let i = 0; i < hour.length; i++){
+            dateArr.push(hour[i][0]);
+            dataArr.push(hour[i][1]);
+        }
+
+        new Chart(hourChart, {
+            type: "bar",
+            data: {
+                labels: dateArr,
+                datasets: [
+                    {
+                        label: "시간별 데이터",
+                        data: dataArr,
+                        backgroundColor: "#6799FF",
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
             },
         });
     }
