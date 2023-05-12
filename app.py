@@ -17,7 +17,7 @@ envuser = os.getenv('envuser')
 envpassword = os.getenv('envpassword')
 envdb = os.getenv('envdb')
 envcharset = os.getenv('envcharset')
-
+items = os.getenv("items")
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
 
@@ -30,11 +30,20 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
+    json_object = json.loads(str(items))
+    splitStr = json_object[request.args.get("menuIndex")].split(",")
+    sqlStr = ''
     
+    for i in range(len(splitStr)):
+        if sqlStr == '':
+            sqlStr += " AND (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+        else :
+            sqlStr += " OR (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+        
     if(request.args.get("whereplus") != None):
         wherecon = request.args.get("whereplus")
     else:
-        wherecon = ''
+        wherecon = sqlStr
         
     if request.args.get("datefrom") == '':
         datfr = curr - datetime.timedelta(minutes=5)
@@ -77,7 +86,7 @@ def mnu001f():
         wherecon = ''
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus') +" and o004 in ("+item02+")"
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=5)
         if datto == '':
@@ -107,7 +116,7 @@ def mnu002f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item02+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -140,7 +149,7 @@ def mnu003f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item03+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -173,7 +182,7 @@ def mnu004f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item04+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -206,7 +215,7 @@ def mnu005f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item05+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -239,7 +248,7 @@ def mnu006f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item06+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -272,7 +281,7 @@ def mnu007f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item07+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -305,7 +314,7 @@ def mnu008f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item08+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -338,7 +347,7 @@ def mnu009f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item09+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -371,7 +380,7 @@ def mnu010f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item10+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -404,7 +413,7 @@ def mnu011f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item11+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -437,7 +446,7 @@ def mnu012f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item12+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -470,7 +479,7 @@ def mnu013f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item13+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -503,7 +512,7 @@ def mnu014f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item14+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -536,7 +545,7 @@ def mnu015f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item15+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -569,7 +578,7 @@ def mnu016f():
     else:
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
+        wherecon = request.form.get('whereplus')+" and o004 in ("+item16+")"
         if wherecon != '':
             wherecon = wherecon
         if datfr == '':
@@ -747,6 +756,6 @@ def userAdd():
 
 if __name__ == '__main__':
     # app.degub = True
-    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    # app.run(debug=True, port=80, host='0.0.0.0')
+    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    app.run(debug=True, port=80, host='0.0.0.0')
     

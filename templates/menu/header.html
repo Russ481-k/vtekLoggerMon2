@@ -127,6 +127,8 @@
                     datas.dateto = $("#dateto").val();
                     datas.datetimetofrom = $("#timeto").val();
                     datas.whereplus = $("#whereplus").val();
+                    datas.menuTitle = localStorage.getItem("menuTitle");
+                    datas.menuIndex = localStorage.getItem("menuIndex");
                     localStorage.clear();
                 }else{
                     let nowDate = new Date();
@@ -144,6 +146,8 @@
                     datas.timefrom = $("#timefrom").val();
                     datas.dateto = $("#dateto").val();
                     datas.datetimetofrom = $("#timeto").val();
+                    datas.menuTitle = localStorage.getItem("menuTitle");
+                    datas.menuIndex = localStorage.getItem("menuIndex");
                 }
 
                 $(window).resize(function() {
@@ -241,6 +245,7 @@
 
         function pageMove(thisEle){
             localStorage.setItem("menuTitle", $(thisEle).text());
+            localStorage.setItem("menuIndex", $(thisEle).data("index"));
             location.href = $(thisEle).data("href");
         }
     </script>
