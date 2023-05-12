@@ -34,8 +34,12 @@
     justify-content: flex-end;
 }
 
-#commonTopHeader #mainInfo form {
+/* #commonTopHeader #mainInfo form {
     position: relative;
+    cursor: pointer;
+} */
+
+#commonTopHeader #mainInfo form[data-keyword="LOGOUT"] {
     cursor: pointer;
 }
 

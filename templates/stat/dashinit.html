@@ -41,25 +41,30 @@
              <div>
                 <div class="chartContents">
                     <div>
-                        <canvas id="serviceChart" width="375" height="420"></canvas>
+                        <div>SERVICE(%)</div>
+                        <canvas id="serviceChart" width="375" height="400"></canvas>
                     </div>
-                    <div>
+                    <!-- <div>
                         <canvas id="areaChart" width="375" height="420"></canvas>
+                    </div> -->
+                    <div>
+                        <div>DISK(%)</div>
+                        <canvas id="diskChart" width="375" height="400"></canvas>
                     </div>
                     <div>
-                        <div>CPU</div> 
+                        <div>CPU(%)</div> 
                         <canvas id="cpuChart" width="375" height="400"></canvas>
                     </div>
                     <div>
-                        <div>MEMORY</div>
+                        <div>MEMORY(%)</div>
                         <canvas id="memoryChart" width="375" height="400"></canvas>
                     </div>
                     <div>
-                        <div>일별</div>
+                        <div>일별(건)</div>
                         <canvas id="monthChart" width="792" height="400"></canvas>
                     </div>
                     <div>
-                        <div>시간별</div>
+                        <div>시간별(건)</div>
                         <canvas id="hourChart" width="792" height="400"></canvas>
                     </div>
                 </div>
@@ -72,10 +77,6 @@
                         <div>MEMORY</div>
                         <canvas id="memoryChart" width="400"></canvas>
                     </div>
-                    <div>
-                        <div>DISK</div>
-                        <canvas id="diskChart" width="400"></canvas>
-                    </div>
                 </div> -->
              </div>
             </div>
@@ -85,12 +86,12 @@
 <script>
     $(document).ready(function () {
         serviceChartSet();
-        areaChartSet();
+        diskChartSet();
         cpuChartSet();
         memoryChartSet();
         monthChartSet();
         hourChartSet();
-        // diskChartSet();
+        //areaChartSet();
     });
 
     function serviceChartSet(){
@@ -101,7 +102,7 @@
 
         for(let i = 0; i < resultArr.length; i++){
             labelArr.push(resultArr[i][0]);
-            dataArr.push(resultArr[i][2]);
+            dataArr.push(Math.round(resultArr[i][2] * 100) / 100);
         }
 
         new Chart(serviceChart, {
@@ -139,7 +140,40 @@
         });
     }
 
-    function areaChartSet(){
+    function diskChartSet(){
+        let diskChart = document.getElementById("diskChart").getContext('2d');
+        let disk = {{result_disk|tojson}};
+        disk[1] = disk[1] / disk[0] * 100;
+        disk[2] = disk[2] / disk[0] * 100;
+
+        new Chart(diskChart, {
+            type: "doughnut",
+            data: {
+                labels: ["used", "free"],
+                datasets: [
+                    {
+                        data: [(disk[1]).toFixed(2), (disk[2]).toFixed(2)],
+                        backgroundColor: [
+                            "#ff5377",
+                            "#95c1e6"
+                        ],
+                        radius:0,
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+            },
+        });
+    }
+
+    /* function areaChartSet(){
         let areaChart = document.getElementById("areaChart").getContext('2d');
         let areaArr = {{area|tojson}};
         let labelArr = [];
@@ -184,7 +218,7 @@
                 },
             },
         });
-    }
+    } */
 
     function cpuChartSet(){
         let cpuChart = document.getElementById("cpuChart").getContext('2d');
@@ -283,39 +317,6 @@
             },
         });
     }
-
-    /* function diskChartSet(){
-        let diskChart = document.getElementById("diskChart").getContext('2d');
-        let disk = {{result_disk|tojson}};
-        disk[1] = disk[1] / disk[0] * 100;
-        disk[2] = disk[2] / disk[0] * 100;
-
-        new Chart(diskChart, {
-            type: "doughnut",
-            data: {
-                labels: ["used", "free"],
-                datasets: [
-                    {
-                        data: [(disk[1]).toFixed(2), (disk[2]).toFixed(2)],
-                        backgroundColor: [
-                            "#ff5377",
-                            "#95c1e6"
-                        ],
-                        radius:0,
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-            },
-        });
-    } */
 
     function monthChartSet(){
         let monthChart = document.getElementById("monthChart").getContext('2d');
