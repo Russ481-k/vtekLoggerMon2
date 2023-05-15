@@ -17,9 +17,26 @@ envuser = os.getenv('envuser')
 envpassword = os.getenv('envpassword')
 envdb = os.getenv('envdb')
 envcharset = os.getenv('envcharset')
-items = os.getenv("items")
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
+menuItems = {
+    "1": "TRAFFIC, THREAT",
+    "2": "THREAT",
+    "3": "TRAFFIC",
+    "4": "WILDFIRE",
+    "5": "TRAFFIC",
+    "6": "TRAFFIC",
+    "7": "TRAFFIC",
+    "8": "TRAFFIC",
+    "9": "TRAFFIC",
+    "10": "TRAFFIC",
+    "11": "TRAFFIC",
+    "12": "TRAFFIC",
+    "13": "TRAFFIC",
+    "14": "TRAFFIC",
+    "15": "TRAFFIC",
+    "16": "TRAFFIC"
+}
 
 @app.route('/')
 def home():
@@ -30,8 +47,7 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
-    json_object = json.loads(str(items))
-    splitStr = json_object[request.args.get("menuIndex")].split(",")
+    splitStr = menuItems[request.args.get("menuIndex")].split(",")
     sqlStr = ''
     
     for i in range(len(splitStr)):
