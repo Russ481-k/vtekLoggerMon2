@@ -29,7 +29,9 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
-    filePath = "./menu.json"
+    rootPath = os.path.dirname(os.path.abspath(__file__)) 
+    filePath = rootPath + "/menu.json"
+    print(rootPath)
     with open(filePath, 'r') as file:
         jsonDump = json.load(file)
     if(request.args.get("menuIndex") == ''):
