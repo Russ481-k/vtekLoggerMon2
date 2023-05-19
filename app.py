@@ -32,7 +32,10 @@ def mnujson():
     filePath = "./menu.json"
     with open(filePath, 'r') as file:
         jsonDump = json.load(file)
-    splitStr = jsonDump["menuItems"][request.args.get("menuIndex")].split(",")
+    if(request.args.get("menuIndex") == ''):
+        splitStr = jsonDump["menuItems"]["1"].split(",")
+    else:
+        splitStr = jsonDump["menuItems"][request.args.get("menuIndex")].split(",")
     sqlStr = ''
     
     for i in range(len(splitStr)):
