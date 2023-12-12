@@ -17,22 +17,6 @@ envuser = os.getenv('envuser')
 envpassword = os.getenv('envpassword')
 envdb = os.getenv('envdb')
 envcharset = os.getenv('envcharset')
-item01 = os.getenv('item01')
-item02 = os.getenv('item02')
-item03 = os.getenv('item03')
-item04 = os.getenv('item04')
-item05 = os.getenv('item05')
-item06 = os.getenv('item06')
-item07 = os.getenv('item07')
-item08 = os.getenv('item08')
-item09 = os.getenv('item09')
-item10 = os.getenv('item10')
-item11 = os.getenv('item11')
-item12 = os.getenv('item12')
-item13 = os.getenv('item13')
-item14 = os.getenv('item14')
-item15 = os.getenv('item15')
-item16 = os.getenv('item16')
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
 
@@ -45,11 +29,27 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
+    rootPath = os.path.dirname(os.path.abspath(__file__)) 
+    filePath = rootPath + "/menu.json"
+    print(rootPath)
+    with open(filePath, 'r') as file:
+        jsonDump = json.load(file)
+    if(request.args.get("menuIndex") == ''):
+        splitStr = jsonDump["menuItems"]["1"].split(",")
+    else:
+        splitStr = jsonDump["menuItems"][request.args.get("menuIndex")].split(",")
+    sqlStr = ''
     
+    for i in range(len(splitStr)):
+        if sqlStr == '':
+            sqlStr += " AND (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+        else :
+            sqlStr += " OR (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+        
     if(request.args.get("whereplus") != None):
         wherecon = request.args.get("whereplus")
     else:
-        wherecon = ''
+        wherecon = sqlStr
         
     if request.args.get("datefrom") == '':
         datfr = curr - datetime.timedelta(minutes=5)
@@ -92,7 +92,7 @@ def mnu001f():
         wherecon = ''
         datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
         datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus') +" and o004 in ("+item01+")"
+        wherecon = request.form.get('whereplus') +" and o004 in ("+item02+")"
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=5)
         if datto == '':
@@ -753,7 +753,7 @@ def userAdd():
         db.close()
         return render_template("menu/userAdd.html", cond=cond)
     else:
-        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (%s, %s, %s, %s, %s, %s, %s)" 
+        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (%s, %s, password(%s), %s, %s, %s, %s)" 
         cur.execute(sql1, (str(request.form.get("userId")), str(request.form.get("userName")), str(request.form.get("userPasswd")), str(request.form.get("userEmail")), str("1111111111"), str("ADMIN"), str("10000")))
         db.commit()
         cond = cur.fetchall()
