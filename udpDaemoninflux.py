@@ -57,7 +57,7 @@ while True:
         else:
             try:
                 measurement = 'inoutT'
-                tags = {'STAMP':'djtest'}
+                tags = {'stamp':'djtest'}
                 fields = json.loads(txtv.replace("'",'"'))
                 insdata = [{'measurement': measurement,'tags': tags, 'fields': fields}]
                 client.write_points(insdata)

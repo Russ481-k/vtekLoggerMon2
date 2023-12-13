@@ -1,6 +1,14 @@
 import pymysql as my
 import os
 from dotenv import load_dotenv
+from influxdb import InfluxDBClient
+
+
+host = 'localhost'
+port = 8086
+user = 'root'
+password = 'root'
+dbname = 'logger'
 
 load_dotenv()
 
@@ -33,25 +41,19 @@ def selectUsers(uid, upw):
 
 def fromtoTraffic(datfr, datto, wherecon):
     rows = None
-    connection = None
+    client = None
     try:
-        connection = my.connect(host=envhost,
-                                user=envuser,
-                                password=envpassword,
-                                database=envdb,
-                                cursorclass=my.cursors.DictCursor
-                                )
-        cursor = connection.cursor()
-        sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto) + "'" + wherecon
-        print(sql)
-        cursor.execute(sql)
-        rows = cursor.fetchall()
+        client = InfluxDBClient(host,port,user,password,dbname)
+        sql = "SELECT * FROM inoutT WHERE (time " + ">='" + str(datfr) + "')" + " AND " + "( time <= '" + str(datto) + "')" + wherecon +"tz ('Asi>
+        rows = client.query(sql)
+        print(rows)
     except Exception as e:
         print('접속오류', e)
     finally:
-        if connection:
-            connection.close()
+        if client:
+            client.close()
     return rows
+
 
 def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     rows = None
