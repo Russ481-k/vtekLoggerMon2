@@ -1,19 +1,16 @@
 import socket
 import numpy as np
-import pymysql
-from dotenv import load_dotenv
+from influxdb import InfluxDBClient
 import os
+import json
 
 
-load_dotenv()
-db =None
-cur = None
-envhost = os.getenv('envhost')
-envuser = os.getenv('envuser')
-envpassword = os.getenv('envpassword')
-envdb = os.getenv('envdb')
-envcharset = os.getenv('envcharset')
-db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+envhost = 'localhost'
+envuser = 'root'
+envpassword = 'root'
+envdb = 'logger'
+envport = 8086
+client = InfluxDBClient(envhost,envport, envuser, envpassword, envdb)
 
 # socket create
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,8 +24,8 @@ while True:
     data_size = 1024
     data, sender = sock.recvfrom(data_size)
     strdata = str(data,'utf-8')
-    strdata.strip("'")
-    strdata.strip('"')
+    strdata.replace('"','')
+    strdata.replace("'","")
     rline=[]
     txtv=''
     sqlv=''
@@ -36,29 +33,39 @@ while True:
     if lc > 50:
         for i in range(0,lc):
             rline = np.append(rline, np.array([strdata.split(',')[i]]))
-            if i== lc-1:
-                sqlv = sqlv + "'" + rline[i] + "'"
-                txtv = txtv + "d" + str('{0:03}'.format(i+1))
-            elif i==0:
+            if i== lc-1:  #Last line
+                if rline[i]=='':
+                    txtv = txtv + "}"
+                else:
+                    sqlv = "'" + rline[i].strip('"') + "'"
+                    txtv = txtv + ",'d" + str('{0:03}'.format(i+1)) + "':" + sqlv.strip('"') + "}"
+            elif i==0:  #First Line
                 slicestr = rline[0]
                 slicestr = slicestr[20:]
-                sqlv = sqlv + "'" + slicestr + "',"
-                txtv = txtv + "d" + str('{0:03}'.format(i + 1)) + ','
+                sqlv = "'" + slicestr + "'"
+                txtv = "{" + "'d" + str('{0:03}'.format(i + 1)) + "':" + sqlv.strip('"')
+            elif i in (110,111):
+                pass
             else:
-                sqlv = sqlv + "'" + rline[i] + "',"
-                txtv = txtv + 'd' +str('{0:03}'.format(i+1)) + ','
+                if rline[i]=='':
+                    pass
+                else:
+                    sqlv = "'" + rline[i].strip('"') + "'"
+                    txtv = txtv + ",'d" +str('{0:03}'.format(i+1)) + "':" + sqlv.strip('"')
         if rline[3] == "SYSTEM":
             pass
         else:
             try:
-                cur = db.cursor()
-                sql = f"INSERT INTO logger.inoutT " +"("+ txtv +")"+ f" VALUES "+"("+ sqlv +")"
-                cur.execute(sql)
-                db.commit()
+                measurement = 'inoutT'
+                tags = {'STAMP':'djtest'}
+                fields = json.loads(txtv.replace("'",'"'))
+                insdata = [{'measurement': measurement,'tags': tags, 'fields': fields}]
+                client.write_points(insdata)
                 cnt += 1
                 print(cnt)
-            except pymysql.err.InternalError as e:
-                code, msg = e.args
+            except Exception as e:
+                print(e)
                 pass
     else:
         pass
+    client.close()
