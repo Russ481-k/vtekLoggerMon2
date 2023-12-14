@@ -3,13 +3,6 @@ import os
 from dotenv import load_dotenv
 from influxdb import InfluxDBClient
 
-
-host = 'localhost'
-port = 8086
-user = 'root'
-password = 'root'
-dbname = 'logger'
-
 load_dotenv()
 
 envhost = os.getenv('envhost')
@@ -40,49 +33,92 @@ def selectUsers(uid, upw):
     return row
 
 def fromtoTraffic(datfr, datto, wherecon):
+    host = '192.168.1.45'
+    port = 8086
+    user = 'root'
+    password = 'root'
+    dbname = 'logger'
     rows = None
     client = None
-    try:
-        client = InfluxDBClient(host,port,user,password,dbname)
-        sql = "SELECT * FROM inoutT WHERE (time " + ">='" + str(datfr) + "')" + " AND " + "( time <= '" + str(datto) + "')" + wherecon +"tz ('Asi>
-        rows = client.query(sql)
-        print(rows)
-    except Exception as e:
-        print('접속오류', e)
-    finally:
-        if client:
-            client.close()
-    return rows
-
+    client = InfluxDBClient(host,port,user,password,dbname)
+    sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc tz('Asia/Seoul')"
+    rows = client.query(sql)
+    client.close()
+    
+    return rows._raw;
+    
+    # rows = None
+    # connection = None
+    # try:
+    #     connection = my.connect(host=envhost,
+    #                             user=envuser,
+    #                             password=envpassword,
+    #                             database=envdb,
+    #                             cursorclass=my.cursors.DictCursor
+    #                             )
+    #     cursor = connection.cursor()
+    #     sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto) + "'" + wherecon
+    #     cursor.execute(sql)
+    #     rows = cursor.fetchall()
+    #     print("rows: " + rows)
+    # except Exception as e:
+    #     print('접속오류', e)
+    # finally:
+    #     if connection:
+    #         connection.close()
+    # return rows
 
 def fromtoTrafficLimit(datfr, datto, wherecon, requests):
+    host = '192.168.1.45'
+    port = 8086
+    user = 'root'
+    password = 'root'
+    dbname = 'logger'
     rows = None
-    connection = None
+    client = None
+    client = InfluxDBClient(host,port,user,password,dbname)
     draw = requests.get("start")
     pageLength = requests.get("length")
     rowIndex = requests.get("order[0][column]");
     sort = requests.get("order[0][dir]");
     rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
-    try:
-        connection = my.connect(host=envhost,
-                                user=envuser,
-                                password=envpassword,
-                                database=envdb,
-                                cursorclass=my.cursors.DictCursor
-                                )
-        cursor = connection.cursor()
-        firstLimit = int(draw)
-        lastLimit = int(pageLength)
-        sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto)+ "'" + wherecon + " order by " + str(rowIndexColumn) + " " + str(sort) + " limit " + str(firstLimit) + ", " + str(lastLimit)
-        print(sql)
-        cursor.execute(sql)
-        rows = cursor.fetchall()
-    except Exception as e:
-        print('접속오류', e)
-    finally:
-        if connection:
-            connection.close()
-    return rows
+    firstLimit = int(draw)
+    lastLimit = int(pageLength)
+    
+    sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time " + str(sort) + " limit " + str(lastLimit) + " OFFSET " + str(firstLimit) + " tz('Asia/Seoul')"
+    rows = client.query(sql)
+    client.close()
+
+    return rows._raw;
+
+    # rows = None
+    # connection = None
+    # draw = requests.get("start")
+    # pageLength = requests.get("length")
+    # rowIndex = requests.get("order[0][column]");
+    # sort = requests.get("order[0][dir]");
+    # rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
+
+    # try:
+    #     connection = my.connect(host=envhost,
+    #                             user=envuser,
+    #                             password=envpassword,
+    #                             database=envdb,
+    #                             cursorclass=my.cursors.DictCursor
+    #                             )
+    #     cursor = connection.cursor()
+    #     firstLimit = int(draw)
+    #     lastLimit = int(pageLength)
+    #     sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto)+ "'" + wherecon + " order by " + str(rowIndexColumn) + " " + str(sort) + " limit " + str(firstLimit) + ", " + str(lastLimit)
+    #     print(sql)
+    #     cursor.execute(sql)
+    #     rows = cursor.fetchall()
+    # except Exception as e:
+    #     print('접속오류', e)
+    # finally:
+    #     if connection:
+    #         connection.close()
+    # return rows
 
 def menuSet(typ):
     rows = None

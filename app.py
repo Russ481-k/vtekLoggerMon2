@@ -33,7 +33,6 @@ def mnujson():
     datto = ''
     rootPath = os.path.dirname(os.path.abspath(__file__)) 
     filePath = rootPath + "/menu.json"
-    print(rootPath)
     with open(filePath, 'r') as file:
         jsonDump = json.load(file)
     if(request.args.get("menuIndex") == ''):
@@ -44,9 +43,9 @@ def mnujson():
     
     for i in range(len(splitStr)):
         if sqlStr == '':
-            sqlStr += " AND (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+            sqlStr += " AND (d004 = " + "'" + splitStr[i].replace(" ", "") + "')"
         else :
-            sqlStr += " OR (d004 in(" + "'" + splitStr[i].replace(" ", "") + "'))";
+            sqlStr += " OR (d004 = " + "'" + splitStr[i].replace(" ", "") + "')"
         
     if(request.args.get("whereplus") != None):
         wherecon = request.args.get("whereplus")
@@ -54,87 +53,105 @@ def mnujson():
         wherecon = sqlStr
         
     if request.args.get("datefrom") == '':
-        datfr = curr - datetime.timedelta(minutes=5)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M')
+        datfr = curr - datetime.timedelta(minutes=1)
+        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
     else : 
-        datfr = request.args.get("datefrom") + " " + request.args.get("timefrom")
+        datfr = request.args.get("datefrom") + " " + request.args.get("timefrom") + ":00"
         
     if request.args.get("dateto") == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M')
+        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
     else :
-        datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom")
-        
+        datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom") + ":00"
+
     resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
+    
+    columns = result["series"][0]["columns"];
+    values = result["series"][0]["values"];
+    setArray = []
+
+    for i in range(len(values)):
+        setObject = {}
+        item = values[i]
+
+        for t in range(len(item)):
+            secondItem = item[t]
+            setObject[columns[t]] = secondItem
+
+        setArray.append(setObject)
+
     resultData = {
-        "data": result,
-        "recordsTotal": len(resultlength),
-        "recordsFiltered": len(resultlength),
+        "data": setArray,
+        "recordsTotal": len(resultlength["series"][0]["values"]),
+        "recordsFiltered": len(resultlength["series"][0]["values"]),
     }
+    
     return jsonify(resultData)
 
-@app.route('/subm/mnu001', methods=['GET', 'POST'])
+@app.route('/subm/mnu001', methods=['GET'])
 def mnu001f():
     curr = datetime.datetime.now()
-    if request.method == 'GET':
-        datfr = ''
-        datto = ''
-        wherecon = ''
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=5)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M')
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M')
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
-        cond = dbconn.menuSet("TRAF")
-        return render_template('./subm/mnu001.html', result = result, cond = cond)
-    else:
-        datfr = ''
-        datto = ''
-        wherecon = ''
-        datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
-        datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus') +" and o004 in ("+item02+")"
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=5)
-        if datto == '':
-            datto = curr
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
-        cond = dbconn.menuSet("TRAF")
-        return render_template("./subm/mnu001.html", result = result, cond = cond)
+    wherecon = ''
+    datfr = ''
+    datto = ''
+    
+    if datfr == '':
+        datfr = curr - datetime.timedelta(minutes=1)
+        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+    if datto == '':
+        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+    
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    cond = dbconn.menuSet("TRAF")
+    
+    return render_template("./subm/mnu001.html", result=result, cond=cond)
+
+    
+    # curr = datetime.datetime.now()
+    # if request.method == 'GET':
+    #     datfr = ''
+    #     datto = ''
+    #     wherecon = ''
+    #     if datfr == '':
+    #         datfr = curr - datetime.timedelta(minutes=5)
+    #         datfr = datfr.strftime('%Y-%m-%d %H:%M')
+    #     if datto == '':
+    #         datto = curr.strftime('%Y-%m-%d %H:%M')
+    #     result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    #     cond = dbconn.menuSet("TRAF")
+    #     return render_template('./subm/mnu001.html', result = result, cond = cond)
+    # else:
+    #     datfr = ''
+    #     datto = ''
+    #     wherecon = ''
+    #     datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
+    #     datto = request.form.get('dateto') + " " + request.form.get('timeto')
+    #     wherecon = request.form.get('whereplus') +" and o004 in ("+item02+")"
+    #     if datfr == '':
+    #         datfr = curr - datetime.timedelta(minutes=5)
+    #     if datto == '':
+    #         datto = curr
+    #     result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    #     cond = dbconn.menuSet("TRAF")
+    #     return render_template("./subm/mnu001.html", result = result, cond = cond)
 
 @app.route('/subm/mnu002', methods=['GET', 'POST'])
 def mnu002f():
     curr = datetime.datetime.now()
-    if request.method == 'GET':
-        datfr = ''
-        datto = ''
-        wherecon = ''
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=5)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M')
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M')
-        print(datfr)
-        print(datto)
-        print(wherecon)
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
-        cond = dbconn.menuSet("THRE")
-        return render_template('./subm/mnu002.html', result = result, cond = cond)
-    else:
-        datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
-        datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')+" and o004 in ("+item02+")"
-        if wherecon != '':
-            wherecon = wherecon
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=5)
-        if datto == '':
-            datto = curr
-        print(wherecon)
-        result = dbconn.fromtoTraffic(datfr,datto, wherecon)
-        cond = dbconn.menuSet("THRE")
-        return render_template("./subm/mnu002.html", result = result, cond = cond)
+    wherecon = ''
+    datfr = ''
+    datto = ''
+    
+    if datfr == '':
+        datfr = curr - datetime.timedelta(minutes=1)
+        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+    if datto == '':
+        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+    
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    cond = dbconn.menuSet("THRE")
+    
+    return render_template("./subm/mnu002.html", result=result, cond=cond)
     
 @app.route('/subm/mnu003', methods=['GET', 'POST'])
 def mnu003f():
@@ -672,7 +689,7 @@ def menuset():
 
 @app.route('/influxtest')
 def influxtest():
-    host = 'localhost'
+    host = '192.168.1.45'
     port = 8086
     user = 'root'
     password = 'root'
@@ -714,21 +731,36 @@ def updatemenu():
 def searchSel():
     db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
-    sql = "select * from dayservice limit 10"
-    cur.execute(sql)
-    result_service = cur.fetchall()
+    host = '192.168.1.45'
+    port = 8086
+    user = 'root'
+    password = 'root'
+    dbname = 'logger'
+    rows = None
+    client = None
+    client = InfluxDBClient(host,port,user,password,dbname)
+    # sql = "select * from dayservice limit 10"
+    # cur.execute(sql)
+    # result_service = cur.fetchall()
+    sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m)"
+    result_service = client.query(sql)
     sql = "select * from areafrom limit 10"
     cur.execute(sql)
     result_area = cur.fetchall()
     result_disk = psutil.disk_usage(os.getcwd())
-    sql = "select * from monthcount order by d002 asc"
-    cur.execute(sql)
-    result_month = cur.fetchall()
-    sql = "select * from hourcount order by d002 asc"
-    cur.execute(sql)
-    result_hour = cur.fetchall()
+    # sql = "select * from monthcount order by d002 asc"
+    # cur.execute(sql)
+    # result_month = cur.fetchall()
+    sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d)"
+    result_month = client.query(sql)
+    # sql = "select * from hourcount order by d002 asc"
+    # cur.execute(sql)
+    # result_hour = cur.fetchall()
+    sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h)"
+    result_hour = client.query(sql)
     db.close()
-    return render_template("stat/dashinit.html", result=result_service, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month, result_hour = result_hour)
+    client.close()
+    return render_template("stat/dashinit.html", result_service=result_service._raw, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month._raw, result_hour = result_hour._raw)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -780,6 +812,6 @@ def userAdd():
 
 if __name__ == '__main__':
     # app.degub = True
-    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    # app.run(debug=True, port=80, host='0.0.0.0')
+    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    app.run(debug=True, port=80, host='0.0.0.0')
     

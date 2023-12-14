@@ -41,24 +41,24 @@
              <div>
                 <div class="chartContents">
                     <div>
-                        <div>SERVICE(%)</div>
-                        <canvas id="serviceChart" width="375" height="400"></canvas>
+                        <div>CPU(%)</div> 
+                        <canvas id="cpuChart" width="375" height="400"></canvas>
                     </div>
-                    <!-- <div>
-                        <canvas id="areaChart" width="375" height="420"></canvas>
-                    </div> -->
                     <div>
                         <div>DISK(%)</div>
                         <canvas id="diskChart" width="375" height="400"></canvas>
                     </div>
                     <div>
-                        <div>CPU(%)</div> 
-                        <canvas id="cpuChart" width="375" height="400"></canvas>
-                    </div>
-                    <div>
                         <div>MEMORY(%)</div>
                         <canvas id="memoryChart" width="375" height="400"></canvas>
                     </div>
+                    <div>
+                        <div>TRAFFIC(5M)</div>
+                        <canvas id="serviceChart" width="375" height="400"></canvas>
+                    </div>
+                    <!-- <div>
+                        <canvas id="areaChart" width="375" height="420"></canvas>
+                    </div> -->
                     <div>
                         <div>일별(건)</div>
                         <canvas id="monthChart" width="792" height="400"></canvas>
@@ -96,17 +96,64 @@
 
     function serviceChartSet(){
         let serviceChart = document.getElementById("serviceChart").getContext('2d');
-        let resultArr = {{result|tojson}};
-        let labelArr = [];
+        let result_service = {{result_service|tojson}};
+        let dateArr = [];
         let dataArr = [];
 
-        for(let i = 0; i < resultArr.length; i++){
-            labelArr.push(resultArr[i][0]);
-            dataArr.push(Math.round(resultArr[i][2] * 100) / 100);
+        for(let i = 0; i < result_service["series"][0]["values"].length; i++){
+            let item = result_service["series"][0]["values"][i];
+            let date = item[0].substring(11, 16);
+            let value = item[1];
+
+            dateArr.push(date);
+            dataArr.push(value);
         }
 
         new Chart(serviceChart, {
-            type: "doughnut",
+            type: "line",
+            data: {
+                labels: dateArr,
+                datasets: [
+                    {
+                        label: "TRAFFIC",
+                        data: dataArr,
+                        backgroundColor: "#ff5377",
+                        borderColor: "#ff5377",
+                        borderWidth: 2,
+                        borderCapStyle: 'round',
+                        fill: false,
+                    },
+                ],
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                },
+            },
+        });
+    }
+
+    /*function serviceChartSet(){
+        let serviceChart = document.getElementById("serviceChart").getContext('2d');
+        let resultArr = {{result_service|tojson}};
+        console.log(resultArr);
+        let dateArr = [];
+        let dataArr = [];
+
+        for(let i = 0; i < resultArr["series"][0]["values"].length; i++){
+            let item = resultArr["series"][0]["values"][i];
+            let date = item[0].substring(5, 10);
+            let value = item[1];
+
+            dateArr.push(date);
+            dataArr.push(value);
+        }
+
+        new Chart(serviceChart, {
+            type: "line",
             data: {
                 labels: labelArr,
                 datasets: [
@@ -138,7 +185,7 @@
                 },
             },
         });
-    }
+    }*/
 
     function diskChartSet(){
         let diskChart = document.getElementById("diskChart").getContext('2d');
@@ -324,9 +371,13 @@
         let dateArr = [];
         let dataArr = [];
 
-        for(let i = 0; i < month.length; i++){
-            dateArr.push(month[i][0]);
-            dataArr.push(month[i][1]);
+        for(let i = 0; i < month["series"][0]["values"].length; i++){
+            let item = month["series"][0]["values"][i];
+            let date = item[0].substring(5, 10);
+            let value = item[1];
+
+            dateArr.push(date);
+            dataArr.push(value);
         }
 
         new Chart(monthChart, {
@@ -352,9 +403,13 @@
         let dateArr = [];
         let dataArr = [];
 
-        for(let i = 0; i < hour.length; i++){
-            dateArr.push(hour[i][0]);
-            dataArr.push(hour[i][1]);
+        for(let i = 0; i < hour["series"][0]["values"].length; i++){
+            let item = hour["series"][0]["values"][i];
+            let date = item[0].substring(5, 10) + " " + item[0].substring(11, 19);
+            let value = item[1];
+
+            dateArr.push(date);
+            dataArr.push(value);
         }
 
         new Chart(hourChart, {
