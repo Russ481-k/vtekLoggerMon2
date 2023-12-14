@@ -84,11 +84,10 @@ def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
     firstLimit = int(draw)
     lastLimit = int(pageLength)
-    
     sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time " + str(sort) + " limit " + str(lastLimit) + " OFFSET " + str(firstLimit) + " tz('Asia/Seoul')"
     rows = client.query(sql)
     client.close()
-
+    
     return rows._raw;
 
     # rows = None
