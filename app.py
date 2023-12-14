@@ -680,7 +680,7 @@ def influxtest():
     rows = None
     client = None
     client = InfluxDBClient(host,port,user,password,dbname)
-    sql = "SELECT * FROM inoutT order by time desc limit 500 tz('Asia/Seoul')"
+    sql = "SELECT * FROM inoutT where d004='TRAFFIC' order by time desc limit 100 tz('Asia/Seoul')"
     rows = client.query(sql)
     print(rows)
     client.close()
