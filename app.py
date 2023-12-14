@@ -8,6 +8,7 @@ import datetime
 import os
 import psutil
 from dotenv import load_dotenv
+from influxdb import InfluxDBClient
 
 
 load_dotenv()
@@ -668,6 +669,22 @@ def menuset():
     cond = cur.fetchall()
     db.close()
     return render_template("menu/menuAdmin.html", cond=cond)
+
+@app.route('/influxtest')
+def influxtest():
+    host = 'localhost'
+    port = 8086
+    user = 'root'
+    password = 'root'
+    dbname = 'logger'
+    rows = None
+    client = None
+    client = InfluxDBClient(host,port,user,password,dbname)
+    sql = "SELECT * FROM inoutT order by time desc limit 500 tz('Asia/Seoul')"
+    rows = client.query(sql)
+    print(rows)
+    client.close()
+    return render_template("menu/menuInflux.html", cond=rows)
 
 @app.route('/updatemenu', methods=['GET','POST'])
 def updatemenu():

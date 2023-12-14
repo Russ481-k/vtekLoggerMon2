@@ -1,4 +1,4 @@
-
+from influxdb import InfluxDBClient
 
 host = 'localhost'
 port = 8086
@@ -10,6 +10,7 @@ def inffromtoTraffic(datfr, datto, wherecon):
     rows = None
     client = None
     try:
+        client = InfluxDBClient(host,port,user,password,dbname)
         sql = "SELECT * FROM inoutT WHERE d002 between " + "'" + str(datfr) + "'" + " AND " + "'" + str(datto) + "'" + wherecon
         rows = client.query(sql)
     except Exception as e:
