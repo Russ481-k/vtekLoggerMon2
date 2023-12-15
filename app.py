@@ -65,25 +65,32 @@ def mnujson():
 
     resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
-    
-    columns = result["series"][0]["columns"];
-    values = result["series"][0]["values"];
+
     setArray = []
 
-    for i in range(len(values)):
-        setObject = {}
-        item = values[i]
+    if len(resultlength["series"]) > 0 : 
+        resultlength = resultlength["series"][0]["values"]
+        columns = result["series"][0]["columns"];
+        values = result["series"][0]["values"];
+        for i in range(len(values)):
+            setObject = {}
+            item = values[i]
 
-        for t in range(len(item)):
-            secondItem = item[t]
-            setObject[columns[t]] = secondItem
+            for t in range(len(item)):
+                secondItem = item[t]
+                setObject[columns[t]] = secondItem
 
-        setArray.append(setObject)
+            setArray.append(setObject)
+    else:
+        resultlength = 0
+
+
+    
 
     resultData = {
         "data": setArray,
-        "recordsTotal": len(resultlength["series"][0]["values"]),
-        "recordsFiltered": len(resultlength["series"][0]["values"]),
+        "recordsTotal": resultlength,
+        "recordsFiltered": resultlength,
     }
     
     return jsonify(resultData)
@@ -411,7 +418,6 @@ def okhome():
             datfr = curr - datetime.timedelta(minutes=2)
         if datto == '':
             datto = curr
-        print(wherecon)
         result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TRAF")
         return render_template("./stat/indexStart.html", result=result, cond=cond)
@@ -443,7 +449,6 @@ def influxtest():
     client = InfluxDBClient(host,port,user,password,dbname)
     sql = "SELECT * FROM inoutT where d004='TRAFFIC' order by time desc limit 100 tz('Asia/Seoul')"
     rows = client.query(sql)
-    print(rows)
     client.close()
     return render_template("menu/menuInflux.html", cond=rows)
 
