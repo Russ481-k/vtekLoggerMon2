@@ -84,9 +84,6 @@ def mnujson():
     else:
         resultlength = 0
 
-
-    
-
     resultData = {
         "data": setArray,
         "recordsTotal": resultlength,
