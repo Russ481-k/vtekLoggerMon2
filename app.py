@@ -480,13 +480,12 @@ def searchSel():
     user = 'root'
     password = 'root'
     dbname = 'logger'
-    rows = None
     client = None
     client = InfluxDBClient(host,port,user,password,dbname)
     # sql = "select * from dayservice limit 10"
     # cur.execute(sql)
     # result_service = cur.fetchall()
-    sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m)"
+    sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m) tz('Asia/Seoul')"
     result_service = client.query(sql)
     sql = "select * from areafrom limit 10"
     cur.execute(sql)
@@ -495,12 +494,12 @@ def searchSel():
     # sql = "select * from monthcount order by d002 asc"
     # cur.execute(sql)
     # result_month = cur.fetchall()
-    sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d)"
+    sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
     result_month = client.query(sql)
     # sql = "select * from hourcount order by d002 asc"
     # cur.execute(sql)
     # result_hour = cur.fetchall()
-    sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h)"
+    sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h) tz('Asia/Seoul')"
     result_hour = client.query(sql)
     db.close()
     client.close()
