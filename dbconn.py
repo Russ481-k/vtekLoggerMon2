@@ -32,7 +32,7 @@ def selectUsers(uid, upw):
             connection.close()
     return row
 
-def fromtoTraffic(datfr, datto, wherecon):
+def fromtoTraffic(datfr, datto, wherecon, limit):
     host = '192.168.1.45'
     port = 8086
     user = 'root'
@@ -41,7 +41,12 @@ def fromtoTraffic(datfr, datto, wherecon):
     rows = None
     client = None
     client = InfluxDBClient(host,port,user,password,dbname)
-    sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc tz('Asia/Seoul')"
+    
+    if limit > 0:
+        sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc limit " + str(limit) + " tz('Asia/Seoul')"
+    else:
+        sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc tz('Asia/Seoul')"
+
     rows = client.query(sql)
     client.close()
     

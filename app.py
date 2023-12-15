@@ -62,14 +62,20 @@ def mnujson():
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
     else :
         datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom") + ":00"
+    
+    
+    if request.args.get("limitNumber") == '':
+        limitNumber = 0
+    else:
+        limitNumber = int(request.args.get("limitNumber"))
 
-    resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon)
+    resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon, limitNumber)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
 
     setArray = []
-
+    
     if len(resultlength["series"]) > 0 : 
-        resultlength = resultlength["series"][0]["values"]
+        resultlength = len(resultlength["series"][0]["values"])
         columns = result["series"][0]["columns"];
         values = result["series"][0]["values"];
         for i in range(len(values)):
@@ -105,7 +111,7 @@ def mnu001f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
     
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("TRAF")
     return render_template("./subm/mnu001.html", result=result, cond=cond)
 
@@ -123,7 +129,7 @@ def mnu002f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
     
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("THRE")
     
     return render_template("./subm/mnu002.html", result=result, cond=cond)
@@ -141,7 +147,7 @@ def mnu003f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("URLF")
     return render_template("./subm/mnu003.html", result = result, cond = cond)
     
@@ -158,7 +164,7 @@ def mnu004f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("WILD")
     return render_template("./subm/mnu004.html", result = result, cond = cond)
     
@@ -175,7 +181,7 @@ def mnu005f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("DATA")
     return render_template("./subm/mnu005.html", result = result, cond = cond)
     
@@ -192,7 +198,7 @@ def mnu006f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("HIPM")
     return render_template("./subm/mnu006.html", result = result, cond = cond)
     
@@ -209,7 +215,7 @@ def mnu007f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("GLOB")
     return render_template("./subm/mnu007.html", result = result, cond = cond)
     
@@ -226,7 +232,7 @@ def mnu008f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("IPTA")
     return render_template("./subm/mnu008.html", result = result, cond = cond)
     
@@ -243,7 +249,7 @@ def mnu009f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("USER")
     return render_template("./subm/mnu009.html", result = result, cond = cond)
     
@@ -260,7 +266,7 @@ def mnu010f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("DESC")
     return render_template("./subm/mnu010.html", result = result, cond = cond)
     
@@ -277,7 +283,7 @@ def mnu011f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("TUNN")
     return render_template("./subm/mnu011.html", result = result, cond = cond)
     
@@ -294,7 +300,7 @@ def mnu012f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("CONF")
     return render_template("./subm/mnu012.html", result = result, cond = cond)
     
@@ -311,7 +317,7 @@ def mnu013f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("SYST")
     return render_template("./subm/mnu013.html", result = result, cond = cond)
     
@@ -328,7 +334,7 @@ def mnu014f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("ALAR")
     return render_template("./subm/mnu014.html", result = result, cond = cond)
     
@@ -345,7 +351,7 @@ def mnu015f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("AUTH")
     return render_template("./subm/mnu015.html", result = result, cond = cond)
 
@@ -362,7 +368,7 @@ def mnu016f():
     if datto == '':
         datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon))
+    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
     cond = dbconn.menuSet("UNIF")
     return render_template("./subm/mnu016.html", result = result, cond = cond)
 
@@ -402,7 +408,7 @@ def okhome():
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S')
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
         cond = dbconn.menuSet("TRAF")
         return render_template('./stat/indexStart.html', result=result, cond=cond)
     else:
@@ -415,7 +421,7 @@ def okhome():
             datfr = curr - datetime.timedelta(minutes=2)
         if datto == '':
             datto = curr
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
         cond = dbconn.menuSet("TRAF")
         return render_template("./stat/indexStart.html", result=result, cond=cond)
 

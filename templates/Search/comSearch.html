@@ -3,12 +3,25 @@
       <form class="search" onsubmit="return false;">
           <div>
             <div>
-                <div class="DateFrom">시작시간: </div>
+                <div class="DateFrom">시작시간: &ensp;</div>
                 <input type="date" id="datefrom" name="datefrom" class="setdate">
-                <input type="time" id="timefrom" name="timefrom">
-                <div class="DateTo">종료시간: </div>
+                <input type="time" id="timefrom" name="timefrom">&ensp;
+                <div class="DateTo">종료시간: &ensp;</div>
                 <input type="date" id="dateto" name="dateto"class="setdate">
                 <input type="time" id="timeto" name="timeto">
+            </div>
+            <div>
+              <select id="limitNumber">
+                <option value="0">무제한</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+                <option value="5000">5000</option>
+                <option value="10000">10000</option>
+                <option value="50000">50000</option>
+                <option value="100000">100000</option>
+              </select>
             </div>
             <div>
               <button type="button" id="csvExportBtn" onClick="downloadCSV(this);">CSV Export</button>
@@ -43,12 +56,19 @@
       if(localStorage.getItem("setSearchText") !== null){
         $("#whereplus").val(localStorage.getItem("setSearchText"));
       }
+
+      if(localStorage.getItem("setSearchLimit") !== null){
+        $("#limitNumber").val(localStorage.getItem("setSearchLimit")).trigger("change");
+      }else{
+        $("#limitNumber").val(0).trigger("change");
+      }
   });
 
   function searchSubmit(){
       localStorage.setItem("setSearchDateFrom", $("#datefrom").val() + " " + $("#timefrom").val());
       localStorage.setItem("setSearchDateTo", $("#dateto").val() + " " + $("#timeto").val());
       localStorage.setItem("setSearchText", $("#whereplus").val());
+      localStorage.setItem("setSearchLimit", $("#limitNumber").val());
       localStorage.setItem("searchFlag", true);
       location.reload();
   }

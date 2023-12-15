@@ -130,6 +130,7 @@
                     datas.whereplus = $("#whereplus").val();
                     datas.menuTitle = localStorage.getItem("menuTitle");
                     datas.menuIndex = localStorage.getItem("menuIndex");
+                    datas.limitNumber = localStorage.getItem("setSearchLimit");
                     localStorage.clear();
                 }else{
                     let nowDate = new Date();
@@ -149,6 +150,7 @@
                     datas.datetimetofrom = $("#timeto").val();
                     datas.menuTitle = localStorage.getItem("menuTitle");
                     datas.menuIndex = localStorage.getItem("menuIndex");
+                    datas.limitNumber = localStorage.getItem("setSearchLimit");
                 }
 
                 $(window).resize(function() {
@@ -186,7 +188,7 @@
                     },
                     "columns": dataArr,
                     "lengthChange" : true, 
-                    "lengthMenu" : [10, 20, 30, 40, 50, 100],
+                    "lengthMenu" : [50, 100],
                     "pageLength": 50,
                 });
 

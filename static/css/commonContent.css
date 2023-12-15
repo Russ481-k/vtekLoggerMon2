@@ -144,6 +144,8 @@ table > thead > tr:first-child > th{
 #commonContent .container .topSearchWrap {
     width:100%;
     overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 5px;
 }
 
 #commonContent > .container > .topSearchWrap > div > div {
@@ -161,13 +163,18 @@ table > thead > tr:first-child > th{
     align-items: center;
 }
 
-#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:first-child{
-    width: 100%;
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:nth-child(1){
+    width: 66%;
     display: flex;
     align-items: center;
 }
 
-#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:last-child{
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:nth-child(2) > select{
+    height: 26px;
+    width: 100px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:nth-child(3){
     width: 100%;
     display: flex;
     align-items: center;
@@ -225,4 +232,8 @@ table > thead > tr:first-child > th{
 /*1920 commonBodyContents 시작*/
 #sideMenu ul:not(#panel), #commonContent {
     height:calc(100vh - 40px);
+}
+
+div.dataTables_wrapper div.dataTables_length select{
+    width: auto !important;
 }
