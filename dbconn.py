@@ -22,8 +22,8 @@ def selectUsers(uid, upw):
                                 cursorclass=my.cursors.DictCursor
                                 )
         cursor = connection.cursor()
-        sql = '''SELECT * FROM userAccount WHERE userId=%s AND userPasswd=password(%s)'''
-        cursor.execute(sql, (uid, upw))
+        sql = '''SELECT * FROM userAccount WHERE userId=%s AND userPasswd=password(%s) AND attrib NOT LIKE %s'''
+        cursor.execute(sql, (uid, upw, str("%XXX")))
         row = cursor.fetchone()
     except Exception as e:
         print('접속오류', e)

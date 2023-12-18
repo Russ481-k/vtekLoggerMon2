@@ -548,8 +548,8 @@ def userAdd():
     cur = db.cursor()
     
     if request.method == 'GET':
-        sql1 = "select * from userAccount"
-        cur.execute(sql1)
+        sql1 = "select * from userAccount where attrib NOT LIKE %s"
+        cur.execute(sql1, (str("%XXX")))
         cond = cur.fetchall()
         db.close()
         return render_template("menu/userAdd.html", cond=cond)
@@ -560,6 +560,26 @@ def userAdd():
         cond = cur.fetchall()
         db.close()
         return render_template("menu/userAdd.html")
+
+@app.route('/userUpdate', methods=['POST'])
+def userUpdate():
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    cur = db.cursor()
+    sql1 = "update userAccount set userPasswd=password(%s) where userId=%s AND attrib NOT LIKE %s" 
+    cur.execute(sql1, (str(request.form.get("userPasswd")), str(request.form.get("userId")), str("%XXX")))
+    db.commit()
+    db.close()
+    return render_template("menu/userAdd.html")
+
+@app.route('/userDelete', methods=['POST'])
+def userDelete():
+    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    cur = db.cursor()
+    sql1 = "update userAccount set attrib='XXXXX' where userId=%s AND attrib NOT LIKE %s" 
+    cur.execute(sql1, (str(request.form.get("userId")), str("%XXX")))
+    db.commit()
+    db.close()
+    return render_template("menu/userAdd.html")
 
 if __name__ == '__main__':
     # app.degub = True
