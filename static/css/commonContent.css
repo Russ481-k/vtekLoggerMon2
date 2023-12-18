@@ -164,8 +164,14 @@ table > thead > tr:first-child > th{
 }
 
 #commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:nth-child(1){
-    width: 66%;
+    width: 74%;
     display: flex;
+    align-items: center;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:nth-child(2){
+    display: flex;
+    width: 25%;
     align-items: center;
 }
 
