@@ -442,7 +442,7 @@ def menuset():
 
 @app.route('/influxtest')
 def influxtest():
-    host = '192.168.1.45'
+    host = 'localhost'
     port = 8086
     user = 'root'
     password = 'root'
@@ -483,7 +483,7 @@ def updatemenu():
 def searchSel():
     db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
-    host = '192.168.1.45'
+    host = 'localhost'
     port = 8086
     user = 'root'
     password = 'root'

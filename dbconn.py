@@ -33,7 +33,7 @@ def selectUsers(uid, upw):
     return row
 
 def fromtoTraffic(datfr, datto, wherecon, limit):
-    host = '192.168.1.45'
+    host = 'localhost'
     port = 8086
     user = 'root'
     password = 'root'
@@ -75,7 +75,7 @@ def fromtoTraffic(datfr, datto, wherecon, limit):
     # return rows
 
 def fromtoTrafficLimit(datfr, datto, wherecon, requests):
-    host = '192.168.1.45'
+    host = 'localhost'
     port = 8086
     user = 'root'
     password = 'root'
