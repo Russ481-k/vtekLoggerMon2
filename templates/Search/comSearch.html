@@ -12,15 +12,11 @@
             </div>
             <div>
               <select id="limitNumber">
-                <option value="0">무제한</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="500">500</option>
-                <option value="1000">1000</option>
                 <option value="5000">5000</option>
                 <option value="10000">10000</option>
                 <option value="50000">50000</option>
                 <option value="100000">100000</option>
+                <option value="0">무제한</option>
               </select>
             </div>
             <div>
@@ -60,7 +56,7 @@
       if(localStorage.getItem("setSearchLimit") !== null){
         $("#limitNumber").val(localStorage.getItem("setSearchLimit")).trigger("change");
       }else{
-        $("#limitNumber").val(0).trigger("change");
+        $("#limitNumber").val(5000).trigger("change");
       }
   });
 

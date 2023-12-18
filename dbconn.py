@@ -84,8 +84,8 @@ def fromtoTrafficLimit(datfr, datto, wherecon, requests):
     client = InfluxDBClient(host,port,user,password,dbname)
     draw = requests.get("start")
     pageLength = requests.get("length")
-    rowIndex = requests.get("order[0][column]");
-    sort = requests.get("order[0][dir]");
+    rowIndex = requests.get("order[0][column]")
+    sort = requests.get("order[0][dir]")
     rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
     firstLimit = int(draw)
     lastLimit = int(pageLength)
