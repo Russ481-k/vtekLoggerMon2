@@ -12,6 +12,14 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = '/css/loading.css') }}" />
     <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
     <div id="loadingDiv"></div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+                alert("{{messages[-1]}}")
+            </script>
+        {% endif %}
+    {% endwith %}
+    
     <style>
         .bottom{
             display: flex;

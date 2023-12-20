@@ -49,7 +49,6 @@ def fromtoTraffic(datfr, datto, wherecon, limit):
     else:
         sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc tz('Asia/Seoul')"
 
-    print(sql)
     rows = client.query(sql)
     client.close()
     

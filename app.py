@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify, request, render_template, redirect , session
+from flask import Flask, jsonify, request, render_template, redirect, session, flash, url_for
 import dbconn
 import influxconn
 from dbconn import selectUsers
@@ -22,6 +22,7 @@ envdb = os.getenv('envdb')
 envcharset = os.getenv('envcharset')
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
+session_text = '로그인 해주세요.'
 
 @app.route('/')
 def home():
@@ -101,277 +102,340 @@ def mnujson():
 
 @app.route('/subm/mnu001', methods=['GET'])
 def mnu001f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
+        
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("TRAF")
+        return render_template("./subm/mnu001.html", result=result, cond=cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
-    
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("TRAF")
-    return render_template("./subm/mnu001.html", result=result, cond=cond)
-
-
 @app.route('/subm/mnu002', methods=['GET', 'POST'])
 def mnu002f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
-    
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
-    
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("THRE")
-    
-    return render_template("./subm/mnu002.html", result=result, cond=cond)
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
+        
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("THRE")
+        
+        return render_template("./subm/mnu002.html", result=result, cond=cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu003', methods=['GET', 'POST'])
 def mnu003f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("URLF")
-    return render_template("./subm/mnu003.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("URLF")
+        return render_template("./subm/mnu003.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu004', methods=['GET', 'POST'])
 def mnu004f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("WILD")
-    return render_template("./subm/mnu004.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("WILD")
+        return render_template("./subm/mnu004.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu005', methods=['GET', 'POST'])
 def mnu005f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("DATA")
-    return render_template("./subm/mnu005.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("DATA")
+        return render_template("./subm/mnu005.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu006', methods=['GET', 'POST'])
 def mnu006f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("HIPM")
-    return render_template("./subm/mnu006.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("HIPM")
+        return render_template("./subm/mnu006.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu007', methods=['GET', 'POST'])
 def mnu007f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("GLOB")
-    return render_template("./subm/mnu007.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("GLOB")
+        return render_template("./subm/mnu007.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu008', methods=['GET', 'POST'])
 def mnu008f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("IPTA")
-    return render_template("./subm/mnu008.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("IPTA")
+        return render_template("./subm/mnu008.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu009', methods=['GET', 'POST'])
 def mnu009f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("USER")
-    return render_template("./subm/mnu009.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("USER")
+        return render_template("./subm/mnu009.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu010', methods=['GET', 'POST'])
 def mnu010f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("DESC")
-    return render_template("./subm/mnu010.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("DESC")
+        return render_template("./subm/mnu010.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu011', methods=['GET', 'POST'])
 def mnu011f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("TUNN")
-    return render_template("./subm/mnu011.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("TUNN")
+        return render_template("./subm/mnu011.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu012', methods=['GET', 'POST'])
 def mnu012f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("CONF")
-    return render_template("./subm/mnu012.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("CONF")
+        return render_template("./subm/mnu012.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu013', methods=['GET', 'POST'])
 def mnu013f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("SYST")
-    return render_template("./subm/mnu013.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("SYST")
+        return render_template("./subm/mnu013.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu014', methods=['GET', 'POST'])
 def mnu014f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("ALAR")
-    return render_template("./subm/mnu014.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("ALAR")
+        return render_template("./subm/mnu014.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
     
 @app.route('/subm/mnu015', methods=['GET', 'POST'])
 def mnu015f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("AUTH")
-    return render_template("./subm/mnu015.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("AUTH")
+        return render_template("./subm/mnu015.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
 
 @app.route('/subm/mnu016', methods=['GET', 'POST'])
 def mnu016f():
-    curr = datetime.datetime.now()
-    wherecon = ''
-    datfr = ''
-    datto = ''
+    if "userName" in session:
+        curr = datetime.datetime.now()
+        wherecon = ''
+        datfr = ''
+        datto = ''
 
-    if datfr == '':
-        datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-    if datto == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        if datfr == '':
+            datfr = curr - datetime.timedelta(minutes=1)
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        if datto == '':
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
 
-    result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
-    cond = dbconn.menuSet("UNIF")
-    return render_template("./subm/mnu016.html", result = result, cond = cond)
+        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        cond = dbconn.menuSet("UNIF")
+        return render_template("./subm/mnu016.html", result = result, cond = cond)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
 
 @app.route('/subm/cpu')  # 요청
 def cpustat():
@@ -399,47 +463,56 @@ def networkstat():
 
 @app.route('/monmain', methods=['GET','POST'])  # 요청
 def okhome():
-    curr = datetime.datetime.now()
-    if request.method == 'GET':
-        datfr = ''
-        datto = ''
-        wherecon = ''
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=2)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
-        cond = dbconn.menuSet("TRAF")
-        return render_template('./stat/indexStart.html', result=result, cond=cond)
+    if "userNo" in session:
+        curr = datetime.datetime.now()
+        if request.method == 'GET':
+            datfr = ''
+            datto = ''
+            wherecon = ''
+            if datfr == '':
+                datfr = curr - datetime.timedelta(minutes=2)
+                datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            if datto == '':
+                datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+            cond = dbconn.menuSet("TRAF")
+            return render_template('./stat/indexStart.html', result=result, cond=cond)
+        else:
+            datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
+            datto = request.form.get('dateto') + " " + request.form.get('timeto')
+            wherecon = request.form.get('whereplus')
+            if wherecon != '':
+                wherecon = wherecon
+            if datfr == '':
+                datfr = curr - datetime.timedelta(minutes=2)
+            if datto == '':
+                datto = curr
+            result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+            cond = dbconn.menuSet("TRAF")
+            return render_template("./stat/indexStart.html", result=result, cond=cond)
     else:
-        datfr = request.form.get('datefrom') + " " + request.form.get('timefrom')
-        datto = request.form.get('dateto') + " " + request.form.get('timeto')
-        wherecon = request.form.get('whereplus')
-        if wherecon != '':
-            wherecon = wherecon
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=2)
-        if datto == '':
-            datto = curr
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
-        cond = dbconn.menuSet("TRAF")
-        return render_template("./stat/indexStart.html", result=result, cond=cond)
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
+
 
 @app.route('/menuset')
 def menuset():
-    if request.args.get("selectValue") == None:
-        selectValue = " and menuNo = 'TRAF'";
+    if "userName" in session:
+        if request.args.get("selectValue") == None:
+            selectValue = " and menuNo = 'TRAF'";
+        else:
+            selectValue = " and menuNo = '" + request.args.get("selectValue") + "'"
+            
+        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        cur = db.cursor()
+        sql1 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where attrib not like '%XXX%'" + selectValue
+        cur.execute(sql1)
+        cond = cur.fetchall()
+        db.close()
+        return render_template("menu/menuAdmin.html", cond=cond)
     else:
-        selectValue = " and menuNo = '" + request.args.get("selectValue") + "'"
-        
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
-    cur = db.cursor()
-    sql1 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where attrib not like '%XXX%'" + selectValue
-    cur.execute(sql1)
-    cond = cur.fetchall()
-    db.close()
-    return render_template("menu/menuAdmin.html", cond=cond)
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
 
 @app.route('/influxtest')
 def influxtest():
@@ -483,38 +556,42 @@ def updatemenu():
 
 @app.route('/dashmain')  # 요청
 def searchSel():
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
-    cur = db.cursor()
-    # host = envhost
-    host = envhostlocal
-    port = 8086
-    user = 'root'
-    password = 'root'
-    dbname = 'logger'
-    client = None
-    client = InfluxDBClient(host,port,user,password,dbname)
-    # sql = "select * from dayservice limit 10"
-    # cur.execute(sql)
-    # result_service = cur.fetchall()
-    sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m) tz('Asia/Seoul')"
-    result_service = client.query(sql)
-    sql = "select * from areafrom limit 10"
-    cur.execute(sql)
-    result_area = cur.fetchall()
-    result_disk = psutil.disk_usage(os.getcwd())
-    # sql = "select * from monthcount order by d002 asc"
-    # cur.execute(sql)
-    # result_month = cur.fetchall()
-    sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
-    result_month = client.query(sql)
-    # sql = "select * from hourcount order by d002 asc"
-    # cur.execute(sql)
-    # result_hour = cur.fetchall()
-    sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h) tz('Asia/Seoul')"
-    result_hour = client.query(sql)
-    db.close()
-    client.close()
-    return render_template("stat/dashinit.html", result_service=result_service._raw, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month._raw, result_hour = result_hour._raw)
+    if "userName" in session:
+        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        cur = db.cursor()
+        # host = envhost
+        host = envhostlocal
+        port = 8086
+        user = 'root'
+        password = 'root'
+        dbname = 'logger'
+        client = None
+        client = InfluxDBClient(host,port,user,password,dbname)
+        # sql = "select * from dayservice limit 10"
+        # cur.execute(sql)
+        # result_service = cur.fetchall()
+        sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m) tz('Asia/Seoul')"
+        result_service = client.query(sql)
+        sql = "select * from areafrom limit 10"
+        cur.execute(sql)
+        result_area = cur.fetchall()
+        result_disk = psutil.disk_usage(os.getcwd())
+        # sql = "select * from monthcount order by d002 asc"
+        # cur.execute(sql)
+        # result_month = cur.fetchall()
+        sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
+        result_month = client.query(sql)
+        # sql = "select * from hourcount order by d002 asc"
+        # cur.execute(sql)
+        # result_hour = cur.fetchall()
+        sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h) tz('Asia/Seoul')"
+        result_hour = client.query(sql)
+        db.close()
+        client.close()
+        return render_template("stat/dashinit.html", result_service=result_service._raw, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month._raw, result_hour = result_hour._raw)
+    else:
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -547,22 +624,26 @@ def logout():
 
 @app.route('/userAdd', methods=['GET', 'POST'])
 def userAdd():
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
-    cur = db.cursor()
-    
-    if request.method == 'GET':
-        sql1 = "select * from userAccount where attrib NOT LIKE %s"
-        cur.execute(sql1, (str("%XXX")))
-        cond = cur.fetchall()
-        db.close()
-        return render_template("menu/userAdd.html", cond=cond)
+    if "userName" in session:
+        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        cur = db.cursor()
+        
+        if request.method == 'GET':
+            sql1 = "select * from userAccount where attrib NOT LIKE %s"
+            cur.execute(sql1, (str("%XXX")))
+            cond = cur.fetchall()
+            db.close()
+            return render_template("menu/userAdd.html", cond=cond)
+        else:
+            sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (%s, %s, password(%s), %s, %s, %s, %s)" 
+            cur.execute(sql1, (str(request.form.get("userId")), str(request.form.get("userName")), str(request.form.get("userPasswd")), str(request.form.get("userEmail")), str("1111111111"), str("ADMIN"), str("10000")))
+            db.commit()
+            cond = cur.fetchall()
+            db.close()
+            return render_template("menu/userAdd.html")
     else:
-        sql1 = "insert into userAccount (userId, userName, userPasswd, userEmail, userKey, userRole, attrib) values (%s, %s, password(%s), %s, %s, %s, %s)" 
-        cur.execute(sql1, (str(request.form.get("userId")), str(request.form.get("userName")), str(request.form.get("userPasswd")), str(request.form.get("userEmail")), str("1111111111"), str("ADMIN"), str("10000")))
-        db.commit()
-        cond = cur.fetchall()
-        db.close()
-        return render_template("menu/userAdd.html")
+        flash(session_text, category="error")
+        return render_template('./login/login.html')
 
 @app.route('/userUpdate', methods=['POST'])
 def userUpdate():
