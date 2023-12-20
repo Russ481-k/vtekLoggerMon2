@@ -6,6 +6,7 @@ from influxdb import InfluxDBClient
 load_dotenv()
 
 envhost = os.getenv('envhost')
+envhostlocal = os.getenv('envhostlocal')
 envuser = os.getenv('envuser')
 envpassword = os.getenv('envpassword')
 envdb = os.getenv('envdb')
@@ -33,7 +34,8 @@ def selectUsers(uid, upw):
     return row
 
 def fromtoTraffic(datfr, datto, wherecon, limit):
-    host = 'localhost'
+    # host = envhost
+    host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
@@ -75,7 +77,8 @@ def fromtoTraffic(datfr, datto, wherecon, limit):
     # return rows
 
 def fromtoTrafficLimit(datfr, datto, wherecon, requests):
-    host = 'localhost'
+    # host = envhost
+    host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'

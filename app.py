@@ -15,6 +15,7 @@ load_dotenv()
 db=None
 cur=None
 envhost = os.getenv('envhost')
+envhostlocal = os.getenv('envhostlocal')
 envuser = os.getenv('envuser')
 envpassword = os.getenv('envpassword')
 envdb = os.getenv('envdb')
@@ -442,7 +443,8 @@ def menuset():
 
 @app.route('/influxtest')
 def influxtest():
-    host = 'localhost'
+    # host = envhost
+    host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
@@ -483,7 +485,8 @@ def updatemenu():
 def searchSel():
     db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
-    host = 'localhost'
+    # host = envhost
+    host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
