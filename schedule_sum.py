@@ -5,7 +5,7 @@ import json
 import schedule
 import time
 
-envhost = '192.168.1.45'
+envhost = 'localhost'
 envuser = 'root'
 envpassword = 'root'
 envdb = 'logger'
