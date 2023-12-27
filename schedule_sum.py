@@ -11,6 +11,7 @@ envpassword = 'root'
 envdb = 'logger'
 envport = 8086
 client = InfluxDBClient(envhost,envport, envuser, envpassword, envdb)
+cnt =  0
 
 def week_sum():
     sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
@@ -44,10 +45,21 @@ def daily_sum():
             print(e)
             pass
 
+def init_data():
+    if cnt == 0:
+        week_sum()
+        daily_sum()
+        print('Data initialized')
+    else:
+        pass
+
+
 schedule.every().day.at("00:30").do(week_sum)
 schedule.every(1).hours.do(daily_sum)
 
 
 while True:
+    init_data()
+    cnt = cnt + 1
     schedule.run_pending()
     time.sleep(1)
