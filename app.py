@@ -579,12 +579,12 @@ def searchSel():
         # sql = "select * from monthcount order by d002 asc"
         # cur.execute(sql)
         # result_month = cur.fetchall()
-        sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
+        sql = " select * from weekSum order by time desc limit 8 tz('Asia/Seoul')"
         result_month = client.query(sql)
         # sql = "select * from hourcount order by d002 asc"
         # cur.execute(sql)
         # result_hour = cur.fetchall()
-        sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h) tz('Asia/Seoul')"
+        sql = " select * from daySum order by time desc limit 24 tz('Asia/Seoul')"
         result_hour = client.query(sql)
         db.close()
         client.close()
