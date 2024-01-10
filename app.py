@@ -667,6 +667,6 @@ def userDelete():
 
 if __name__ == '__main__':
     # app.degub = True
-    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    # app.run(debug=True, port=80, host='0.0.0.0')
+    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    app.run(debug=True, port=80, host='0.0.0.0')
     
