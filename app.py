@@ -516,8 +516,8 @@ def menuset():
 
 @app.route('/influxtest')
 def influxtest():
-    # host = envhost
-    host = envhostlocal
+    host = envhost
+    # host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
@@ -559,8 +559,8 @@ def searchSel():
     if "userName" in session:
         db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
         cur = db.cursor()
-        # host = envhost
-        host = envhostlocal
+        host = envhost
+        # host = envhostlocal
         port = 8086
         user = 'root'
         password = 'root'

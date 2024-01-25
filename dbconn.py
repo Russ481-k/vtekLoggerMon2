@@ -34,8 +34,8 @@ def selectUsers(uid, upw):
     return row
 
 def fromtoTraffic(datfr, datto, wherecon, limit):
-    # host = envhost
-    host = envhostlocal
+    host = envhost
+    # host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
@@ -76,8 +76,8 @@ def fromtoTraffic(datfr, datto, wherecon, limit):
     # return rows
 
 def fromtoTrafficLimit(datfr, datto, wherecon, requests):
-    # host = envhost
-    host = envhostlocal
+    host = envhost
+    # host = envhostlocal
     port = 8086
     user = 'root'
     password = 'root'
