@@ -380,8 +380,8 @@
             let date = item[2].substring(5, 10);
             let value = item[1];
 
-            dateArr.push(date);
-            dataArr.push(value);
+            dateArr.unshift(date);
+            dataArr.unshift(value);
         }
 
         new Chart(monthChart, {
@@ -416,8 +416,8 @@
             let date = setDate.substring(5, 10) + " " + setDate.substring(11, 19);
             let value = item[1];
 
-            dateArr.push(date);
-            dataArr.push(value);
+            dateArr.unshift(date);
+            dataArr.unshift(value);
         }
 
         new Chart(hourChart, {
