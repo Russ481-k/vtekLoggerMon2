@@ -1,15 +1,8 @@
-import json
-from flask import Flask, jsonify, request, render_template, redirect, session, flash, url_for
-import dbconn
-import influxconn
+import pymysql, requests, os, psutil, dbconn, json, datetime
+from flask import Flask, jsonify, request, render_template, redirect, session, flash
 from dbconn import selectUsers
-import pymysql
-import datetime
-import os
-import psutil
+from datetime import timedelta 
 from dotenv import load_dotenv
-from influxdb import InfluxDBClient
-
 
 load_dotenv()
 db=None
@@ -23,6 +16,27 @@ envcharset = os.getenv('envcharset')
 app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
 session_text = '로그인 해주세요.'
+
+
+##############################################################
+# 마크베이스 연동
+##############################################################
+def convert_datetime_to_ns(dt):
+    """datetime 객체를 나노초로 변환합니다."""
+    return int(dt.timestamp() * 1_000_000_000)
+
+def machbase_from_to_traffic(date_from, date_to, where_con=""):
+    """주어진 기간에 대한 교통 데이터를 Machbase에서 조회합니다."""
+    try:
+        url = "http://192.168.200.20:5654/db/query"
+        query = f"SELECT d000, count(d001) FROM inoutT WHERE d000 BETWEEN '{date_from}' AND '{date_to}' {where_con} GROUP BY d000"
+        response = requests.get(url, params={"q": query})
+        data = response.json()
+        return data
+    except Exception as e:
+        print('접속 오류', e)
+        return None
+##############################################################
 
 @app.route('/')
 def home():
@@ -45,9 +59,9 @@ def mnujson():
     
     for i in range(len(splitStr)):
         if sqlStr == '':
-            sqlStr += " AND (d004 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
         else :
-            sqlStr += " OR (d004 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
         
     if(request.args.get("whereplus") != None):
         wherecon = request.args.get("whereplus")
@@ -56,12 +70,12 @@ def mnujson():
         
     if request.args.get("datefrom") == '':
         datfr = curr - datetime.timedelta(minutes=1)
-        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+        datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     else : 
         datfr = request.args.get("datefrom") + " " + request.args.get("timefrom") + ":00"
         
     if request.args.get("dateto") == '':
-        datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+        datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     else :
         datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom") + ":00"
     
@@ -73,31 +87,36 @@ def mnujson():
 
     resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon, limitNumber)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
-
     setArray = []
-    
-    if len(resultlength["series"]) > 0 : 
-        resultlength = len(resultlength["series"][0]["values"])
-        columns = result["series"][0]["columns"];
-        values = result["series"][0]["values"];
-        for i in range(len(values)):
-            setObject = {}
-            item = values[i]
+    if resultlength is not None : 
+        if len(resultlength) > 0 : 
+            resultlength = len(resultlength["rows"])
+            
+            columns = result["columns"]
+            values = result["rows"]
+            for i in range(len(values)):
+                setObject = {}
+                item = values[i]
 
-            for t in range(len(item)):
-                secondItem = item[t]
-                setObject[columns[t]] = secondItem
+                for t in range(len(item)):
+                    if t == 0 :
+                        secondItem = item[t][20:]
+                    else:
+                        if item[t] is not None : 
+                            secondItem = item[t]
+                        else : 
+                            secondItem = "-"
+                    setObject[columns[t].lower()] = secondItem
 
-            setArray.append(setObject)
-    else:
-        resultlength = 0
+                setArray.append(setObject)
+        else:
+            resultlength = 0
 
     resultData = {
         "data": setArray,
         "recordsTotal": resultlength,
         "recordsFiltered": resultlength,
     }
-    
     return jsonify(resultData)
 
 @app.route('/subm/mnu001', methods=['GET'])
@@ -110,9 +129,9 @@ def mnu001f():
         
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("TRAF")
@@ -125,17 +144,17 @@ def mnu001f():
 def mnu002f():
     if "userName" in session:
         curr = datetime.datetime.now()
-        wherecon = ''
+        wherecon = 'Threat'
         datfr = ''
         datto = ''
         
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
         cond = dbconn.menuSet("THRE")
         
         return render_template("./subm/mnu002.html", result=result, cond=cond)
@@ -153,9 +172,9 @@ def mnu003f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("URLF")
@@ -174,9 +193,9 @@ def mnu004f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("WILD")
@@ -195,9 +214,9 @@ def mnu005f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("DATA")
@@ -216,9 +235,9 @@ def mnu006f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("HIPM")
@@ -237,9 +256,9 @@ def mnu007f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("GLOB")
@@ -258,9 +277,9 @@ def mnu008f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("IPTA")
@@ -279,9 +298,9 @@ def mnu009f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("USER")
@@ -300,9 +319,9 @@ def mnu010f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("DESC")
@@ -321,9 +340,9 @@ def mnu011f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("TUNN")
@@ -342,9 +361,9 @@ def mnu012f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("CONF")
@@ -363,9 +382,9 @@ def mnu013f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("SYST")
@@ -384,9 +403,9 @@ def mnu014f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("ALAR")
@@ -405,9 +424,9 @@ def mnu015f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("AUTH")
@@ -426,9 +445,9 @@ def mnu016f():
 
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S')
+            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
         result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
         cond = dbconn.menuSet("UNIF")
@@ -471,10 +490,11 @@ def okhome():
             wherecon = ''
             if datfr == '':
                 datfr = curr - datetime.timedelta(minutes=2)
-                datfr = datfr.strftime('%Y-%m-%d %H:%M:%S')
+                datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             if datto == '':
-                datto = curr.strftime('%Y-%m-%d %H:%M:%S')
-            result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+                datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            result = []
+            dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
             cond = dbconn.menuSet("TRAF")
             return render_template('./stat/indexStart.html', result=result, cond=cond)
         else:
@@ -499,7 +519,7 @@ def okhome():
 def menuset():
     if "userName" in session:
         if request.args.get("selectValue") == None:
-            selectValue = " and menuNo = 'TRAF'";
+            selectValue = " and menuNo = 'TRAF'"
         else:
             selectValue = " and menuNo = '" + request.args.get("selectValue") + "'"
             
@@ -513,22 +533,6 @@ def menuset():
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
-
-@app.route('/influxtest')
-def influxtest():
-    # host = envhost
-    host = envhostlocal
-    port = 8086
-    user = 'root'
-    password = 'root'
-    dbname = 'logger'
-    rows = None
-    client = None
-    client = InfluxDBClient(host,port,user,password,dbname)
-    sql = "SELECT * FROM inoutT where d004='TRAFFIC' order by time desc limit 100 tz('Asia/Seoul')"
-    rows = client.query(sql)
-    client.close()
-    return render_template("menu/menuInflux.html", cond=rows)
 
 @app.route('/updatemenu', methods=['GET','POST'])
 def updatemenu():
@@ -559,40 +563,62 @@ def searchSel():
     if "userName" in session:
         db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
         cur = db.cursor()
-        # host = envhost
-        host = envhostlocal
-        port = 8086
-        user = 'root'
-        password = 'root'
-        dbname = 'logger'
-        client = None
-        client = InfluxDBClient(host,port,user,password,dbname)
-        # sql = "select * from dayservice limit 10"
-        # cur.execute(sql)
-        # result_service = cur.fetchall()
-        sql = "select time, count(d001) from inoutT where time >= now()-1h group by time(5m) tz('Asia/Seoul')"
-        result_service = client.query(sql)
+
+        # 현재 시간과 1시간 전 시간을 구합니다.
+        now = datetime.datetime.now()
+        one_hour_ago = now - timedelta(hours=1)
+
+        # 데이터 조회
+        result_service = machbase_from_to_traffic(str(one_hour_ago)[:-3], str(now)[:-3])
+        
+        # 나머지 MySQL 쿼리 실행
         sql = "select * from areafrom limit 10"
         cur.execute(sql)
         result_area = cur.fetchall()
+        
         result_disk = psutil.disk_usage(os.getcwd())
-        # sql = "select * from monthcount order by d002 asc"
-        # cur.execute(sql)
-        # result_month = cur.fetchall()
-        sql = " select * from weekSum order by time desc limit 8 tz('Asia/Seoul')"
-        result_month = client.query(sql)
-        # sql = "select * from hourcount order by d002 asc"
-        # cur.execute(sql)
-        # result_hour = cur.fetchall()
-        sql = " select * from daySum order by time desc limit 24 tz('Asia/Seoul')"
-        result_hour = client.query(sql)
+        
+        # 현재 시간과 일주일 전 시간을 구합니다.
+        one_week_ago = now - timedelta(weeks=1)
+
+        # 데이터 조회
+        result_month = machbase_from_to_traffic(str(one_week_ago)[:-3], str(now)[:-3])
+
+        # 현재 시간과 24시간 전 시간을 구합니다.
+        one_day_ago = now - timedelta(days=1)
+
+        # 데이터 조회
+        result_hour = machbase_from_to_traffic(str(one_day_ago)[:-3], str(now)[:-3])
+        print(
+            "result_service",
+            result_service,
+            "result_area",
+            result_area,
+            "psutil.cpu_times_percent().idle",
+            psutil.cpu_times_percent().idle,
+            "psutil.cpu_percent()",
+            psutil.cpu_percent(),
+            "result_disk",
+            result_disk,
+            "result_month",
+            result_month,
+            "result_hour",
+            result_hour
+            )
         db.close()
-        client.close()
-        return render_template("stat/dashinit.html", result_service=result_service._raw, area = result_area, cpu_remain = psutil.cpu_times_percent().idle, cpu_percent = psutil.cpu_percent(), result_mem = psutil.virtual_memory(), result_disk = result_disk, result_month = result_month._raw, result_hour = result_hour._raw)
+
+        return render_template("stat/dashinit.html", 
+                               result_service=result_service, 
+                               area=result_area, 
+                               cpu_remain=psutil.cpu_times_percent().idle, 
+                               cpu_percent=psutil.cpu_percent(), 
+                               result_mem=psutil.virtual_memory(), 
+                               result_disk=result_disk, 
+                               result_month=result_month, 
+                               result_hour=result_hour)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -669,4 +695,3 @@ if __name__ == '__main__':
     # app.degub = True
     app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
     # app.run(debug=True, port=80, host='0.0.0.0')
-    

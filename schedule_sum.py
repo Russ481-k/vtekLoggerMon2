@@ -1,54 +1,77 @@
 import numpy as np
-from influxdb import InfluxDBClient
-import os
-import json
-import schedule
-import time
+import requests, schedule, time, datetime, json
+import asyncio
+import aiohttp
 
-envhost = 'localhost'
-envuser = 'root'
-envpassword = 'root'
-envdb = 'logger'
-envport = 8086
-client = InfluxDBClient(envhost,envport, envuser, envpassword, envdb)
+
+url = "http://192.168.200.20:5654/db"
 cnt =  0
 
-def week_sum():
-    sql = "select count(d001) from inoutT where time >= now()-1w group by time(1d) tz('Asia/Seoul')"
-    result = client.query(sql)
-    result=result._raw
-    values = result["series"][0]["values"]
-    for i in range(len(values)):
-        try:
-            measurement = 'weekSum'
-            tags = {'stamp': values[i][0]}
-            fields = {'count' : values[i][1]}
-            insdata = [{'measurement': measurement, 'tags': tags, 'fields': fields}]
-            client.write_points(insdata)
-        except Exception as e:
-            print(e)
-            pass
+async def post_data(result,table):
+    headers = {
+        "Content-Type": "application/json"
+    }
+    async with aiohttp.ClientSession() as session:
+        print(json.dumps(result))
+        async with session.post(url+"/write/"+table, headers=headers, data=json.dumps(result)) as response:
+            print(await response.text())
 
-def daily_sum():
-    sql = "select time, count(d001) from inoutT where time >= now()-1d group by time(1h) tz('Asia/Seoul')"
-    result1 = client.query(sql)
-    result1 = result1._raw
-    values1 = result1["series"][0]["values"]
-    for i in range(len(values1)):
-        try:
-            measurement1 = 'daySum'
-            tags1 = {'stamp': values1[i][0]}
-            fields1 = {'count' : values1[i][1]}
-            insdata1 = [{'measurement': measurement1, 'tags': tags1, 'fields': fields1}]
-            client.write_points(insdata1)
-        except Exception as e:
-            print(e)
-            pass
+async def week_sum():
+    try:
+        date_now = datetime.datetime.now()
+        date_from = (date_now - datetime.timedelta(weeks=1)).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        date_to = date_now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        query = f"SELECT COUNT(*) count FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') GROUP BY DATE_BIN('day', 1, d001, TO_DATE('{date_to}'))"
+        response = requests.get(url+"/query", params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
+        data = response.json()["data"]["rows"]
+        
+        result = {
+            "data": {
+                "columns":[],
+                "rows": []
+            }
+        }
+        result["data"]["columns"].append("count")
+        for i in range(len(data)):
+            result["data"]["rows"].append([data[i][0]])
+        # print(cnt, "week_sum",result)
+        await post_data(result,"weeksum")
+        
+    except Exception as e:
+        print('접속 오류', e)
 
-def init_data():
+        pass
+
+async def daily_sum():
+    try:
+        date_now = datetime.datetime.now()
+        date_from = (date_now - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        date_to = date_now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        query = f"SELECT COUNT(*) count FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') GROUP BY DATE_BIN('hour', 1, d001, TO_DATE('{date_to}'))"
+        response = requests.get(url+"/query", params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
+        data = response.json()["data"]["rows"]
+        
+        result = {
+            "data": {
+                "columns":[],
+                "rows":[]
+            }
+        }
+        result["data"]["columns"].append("count")
+        for i in range(len(data)):
+            result["data"]["rows"].append([data[i][0]])
+        # print(cnt, "daily_sum",result)
+        await post_data(result,"daysum")
+        
+    except Exception as e:
+        print('접속 오류', e)
+
+        pass
+
+async def init_data():
     if cnt == 0:
-        week_sum()
-        daily_sum()
+        await week_sum()
+        await daily_sum()
         print('Data initialized')
     else:
         pass
@@ -59,7 +82,9 @@ schedule.every(1).hours.do(daily_sum)
 
 
 while True:
-    init_data()
+    asyncio.run(init_data())
     cnt = cnt + 1
     schedule.run_pending()
     time.sleep(1)
+
+    

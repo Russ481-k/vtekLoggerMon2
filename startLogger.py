@@ -1,3 +1,3 @@
 import os
 
-os.system('nohup python3 /home/vtek/logger/vtekLoggerMon2/udpDaemoninflux.py&')
+os.system('nohup python3 /home/vision/vtekLoggerMon2/udpDaemonMachbase.py&')

@@ -1,7 +1,6 @@
 import pymysql as my
-import os
+import os, requests
 from dotenv import load_dotenv
-from influxdb import InfluxDBClient
 
 load_dotenv()
 
@@ -33,26 +32,22 @@ def selectUsers(uid, upw):
             connection.close()
     return row
 
-def fromtoTraffic(datfr, datto, wherecon, limit):
-    # host = envhost
-    host = envhostlocal
-    port = 8086
-    user = 'root'
-    password = 'root'
-    dbname = 'logger'
-    rows = None
-    client = None
-    client = InfluxDBClient(host,port,user,password,dbname)
-    
+def fromtoTraffic(date_from, date_to, wherecon, limit):
+    envhost = "http://192.168.200.20:5654/db/query/"
+    query = ""
     if limit > 0:
-        sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc limit " + str(limit) + " tz('Asia/Seoul')"
+        query = f"SELECT d001, count(d000) FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by d001 order by d001 desc limit {str(limit)}"
     else:
-        sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time desc tz('Asia/Seoul')"
+        query = f"SELECT d001, count(d000) FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by d001 order by d001 desc"
+    try:
+        response = requests.get(envhost, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
+        print(query)
+        rows = response.json()["data"]
+        return rows
+    except Exception as e:
+        print('접속오류', e)
 
-    rows = client.query(sql)
-    client.close()
-    
-    return rows._raw;
+   
     
     # rows = None
     # connection = None
@@ -75,28 +70,24 @@ def fromtoTraffic(datfr, datto, wherecon, limit):
     #         connection.close()
     # return rows
 
-def fromtoTrafficLimit(datfr, datto, wherecon, requests):
-    # host = envhost
-    host = envhostlocal
-    port = 8086
-    user = 'root'
-    password = 'root'
-    dbname = 'logger'
-    rows = None
-    client = None
-    client = InfluxDBClient(host,port,user,password,dbname)
-    draw = requests.get("start")
-    pageLength = requests.get("length")
-    rowIndex = requests.get("order[0][column]")
-    sort = requests.get("order[0][dir]")
-    rowIndexColumn = requests.get("columns[" + rowIndex + "][data]")
+
+def fromtoTrafficLimit(date_from, date_to, wherecon, req):
+    envhost = "http://192.168.200.20:5654/db/query/"
+    query=""
+    draw = req.get("start")
+    pageLength = req.get("length")
+    rowIndex = req.get("order[0][column]")
+    sort = req.get("order[0][dir]")
+    rowIndexColumn = req.get("columns[" + rowIndex + "][data]")
     firstLimit = int(draw)
     lastLimit = int(pageLength)
-    sql = "SELECT * FROM inoutT where time >= " + '\'' + datfr + '\'' + " AND time <= " + '\'' + datto + '\'' + wherecon + " order by time " + str(sort) + " limit " + str(lastLimit) + " OFFSET " + str(firstLimit) + " tz('Asia/Seoul')"
-    rows = client.query(sql)
-    client.close()
-    
-    return rows._raw;
+    query = f"SELECT * FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} order by d001 {str(sort)} limit {str(firstLimit)}, {str(lastLimit)}"
+    try:
+        response = requests.get(envhost, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
+        rows = response.json()["data"]
+        return rows
+    except Exception as e:
+        print('접속오류', e)
 
     # rows = None
     # connection = None

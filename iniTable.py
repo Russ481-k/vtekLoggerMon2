@@ -3,8 +3,8 @@ from influxdb import InfluxDBClient
 host = 'localhost'  # InfluxDB 호스트 주소
 port = 8086         # InfluxDB 포트
 database = 'logger'  # 사용할 데이터베이스 이름
-username = 'root'  # InfluxDB 사용자 이름
-password = 'root'  # InfluxDB 비밀번호
+username = 'swcore'  # InfluxDB 사용자 이름
+password = 'core2020'  # InfluxDB 비밀번호
 
 client = InfluxDBClient(host, port, username, password, database)
 
