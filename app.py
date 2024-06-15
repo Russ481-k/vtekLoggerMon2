@@ -42,20 +42,19 @@ def mnujson():
     else:
         menuIndex = menuIndex[-2:]
 
-    splitStr = jsonDump["menuItems"][menuIndex].split(",")
     sqlStr = ''
     limitNumber = 0
+    splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
     for i in range(len(splitStr)):
-
-
         if sqlStr == '':
             sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
         else :
             sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
         wherecon = sqlStr
-
-
+    
+    if(request.args.get("whereplus") != None):
+        wherecon += request.args.get("whereplus")
 
     if((req.get("datefrom") == None)|(req.get("datefrom") == "")):
         datfr = curr - datetime.timedelta(minutes=1)
@@ -75,7 +74,6 @@ def mnujson():
     
     resultlength = dbconn.fromtoLength(datfr, datto, wherecon, limitNumber)
     result = dbconn.fromtoTrafficLimit(datfr, datto, wherecon, req)
-    
     setArray = []
 
     if len(resultlength) > 0 : 
@@ -98,16 +96,14 @@ def mnujson():
                 setObject[columns[t].lower()] = secondItem
 
             setArray.append(setObject)
-        else:
-            resultlength = 0
-
-
-        resultData = {
-            "data": setArray,
-            "recordsTotal": [[resultlength]],
-            "recordsFiltered": [[resultlength]],
-        }
-        print(resultData)
+    else:
+        resultlength = 0
+    print("resultlength",resultlength)
+    resultData = {
+        "data": setArray,
+        "recordsTotal": resultlength,
+        "recordsFiltered": resultlength,
+    }
     return jsonify(resultData)
 
 @app.route('/subm/mnu001', methods=['GET'])
@@ -895,6 +891,6 @@ def userDelete():
 
 if __name__ == '__main__':
     # app.degub = True
-    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    app.run(debug=True, port=80, host='0.0.0.0')
+    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    # app.run(debug=True, port=80, host='0.0.0.0')
 
