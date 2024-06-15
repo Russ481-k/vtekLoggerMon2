@@ -2,10 +2,18 @@ import numpy as np
 import requests, schedule, time, datetime, json
 import asyncio
 import aiohttp
+import os
 
 
-url = "http://192.168.200.20:5654/db"
 cnt =  0
+envhost = os.getenv('envhost')
+envhostlocal = os.getenv('envhostlocal')
+envuser = os.getenv('envuser')
+envpassword = os.getenv('envpassword')
+envdb = os.getenv('envdb')
+envcharset = os.getenv('envcharset')
+
+url = "http://"+ envhost + ":5654/db/query"
 
 async def post_data(result,table):
     headers = {
@@ -33,8 +41,7 @@ async def week_sum():
         }
         result["data"]["columns"].append("count")
         for i in range(len(data)):
-            result["data"]["rows"].append([data[i][0]])
-        # print(cnt, "week_sum",result)
+            result["data"]["rows"].append([str(data[i][0])])
         await post_data(result,"weeksum")
         
     except Exception as e:
@@ -59,8 +66,8 @@ async def daily_sum():
         }
         result["data"]["columns"].append("count")
         for i in range(len(data)):
-            result["data"]["rows"].append([data[i][0]])
-        # print(cnt, "daily_sum",result)
+            result["data"]["rows"].append([str(data[i][0])])
+        print(cnt, "daily_sum",result)
         await post_data(result,"daysum")
         
     except Exception as e:
@@ -86,5 +93,3 @@ while True:
     cnt = cnt + 1
     schedule.run_pending()
     time.sleep(1)
-
-    

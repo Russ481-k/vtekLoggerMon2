@@ -177,8 +177,8 @@
         datas.datetimetofrom = $("#timeto").val();
         datas.whereplus = $("#whereplus").val();
         datas.menuTitle = localStorage.getItem("menuTitle");
-        datas.menuIndex = Number(localStorage.getItem("menuIndex"))+1;
-        console.log("menuIndex",datas.menuIndex)
+        datas.menuIndex = Number(localStorage.getItem("menuIndex")) + 1;
+        console.log("menuIndex", datas.menuIndex);
         datas.limitNumber = localStorage.getItem("setSearchLimit");
         localStorage.clear();
       } else {
@@ -203,7 +203,7 @@
           $("#timefrom").val(
             String(nowDate.getHours()).padStart(2, "0") +
               ":" +
-              String(nowDate.getMinutes()).padStart(2, "0")
+              String(nowDate.getMinutes() - 5).padStart(2, "0")
           );
         }
 
@@ -263,32 +263,32 @@
         localStorage.getItem("menuTitle") &&
         localStorage.getItem("menuTitle") !== null
       ) {
-          $("#csvExportBtn").attr(
-            "data-title",
-            localStorage.getItem("menuTitle") +
+        $("#csvExportBtn").attr(
+          "data-title",
+          localStorage.getItem("menuTitle") +
             "(" +
-              datas.datefrom +
-              " " +
-              datas.timefrom.replace(/(\d{2})_(\d{2})/, '$1:$2') +
-              ") ~ (" +
-              datas.dateto +
-              " " +
-              datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, '$1:$2') +
-              ")"
-          );
-      }else{
-          $("#csvExportBtn").attr(
-            "data-title",
-            "(" +
-              datas.datefrom +
-              " " +
-              datas.timefrom.replace(/(\d{2})_(\d{2})/, '$1:$2') +
-              ") ~ (" +
-              datas.dateto +
-              " " +
-              datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, '$1:$2') +
-              ")"
-          );
+            datas.datefrom +
+            " " +
+            datas.timefrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
+            ") ~ (" +
+            datas.dateto +
+            " " +
+            datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
+            ")"
+        );
+      } else {
+        $("#csvExportBtn").attr(
+          "data-title",
+          "(" +
+            datas.datefrom +
+            " " +
+            datas.timefrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
+            ") ~ (" +
+            datas.dateto +
+            " " +
+            datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
+            ")"
+        );
       }
       localStorage.removeItem("menuTitle");
     }, 300);
@@ -342,8 +342,4 @@
     location.href = $(thisEle).data("href");
   }
 </script>
-
-
-
-
 

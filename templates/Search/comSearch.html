@@ -34,21 +34,26 @@
 </div>
 <script>
   $(window).ready(function(){
+      const offset = new Date().getTimezoneOffset() * 60000;
+      const today = new Date(Date.now() - offset);
+      
       if(localStorage.getItem("setSearchDateFrom") !== null){
         let splitStr = localStorage.getItem("setSearchDateFrom").split(" ");
         $("#datefrom").val(splitStr[0]);
         $("#timefrom").val(splitStr[1]);
       }else{
-        $("#datefrom").val(new Date().toISOString().slice(0, 10));
+        $("#datefrom").val(today.toISOString().slice(0, 10));
       }
 
       if(localStorage.getItem("setSearchDateTo") !== null){
         let splitStr = localStorage.getItem("setSearchDateTo").split(" ");
         $("#dateto").val(splitStr[0]);
         $("#timeto").val(splitStr[1]);
-      }else{
-        $("#dateto").val(new Date().toISOString().slice(0, 10));
-      }
+
+        }else{
+          $("#dateto").val(today.toISOString().slice(0, 10));
+        }
+        console.log(today.toISOString().slice(0, 10))
 
       if(localStorage.getItem("setSearchText") !== null){
         $("#whereplus").val(localStorage.getItem("setSearchText"));
@@ -70,3 +75,4 @@
       location.reload();
   }
 </script>
+

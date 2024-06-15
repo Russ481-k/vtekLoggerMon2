@@ -1,74 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-{% include '/menu/header.html' %}
-<style>
-    .container{
+  <head>
+    {% include '/menu/header.html' %}
+    <style>
+      .container {
         padding-right: 0;
         overflow: auto;
-    }
+      }
 
-    .chartContents{
+      .chartContents {
         display: flex;
         flex-flow: row wrap;
         align-items: center;
         padding-bottom: 20px;
-    }
+      }
 
-    .chartContents > div{
-        border: 1px solid #BDBDBD;
+      .chartContents > div {
+        border: 1px solid #bdbdbd;
         padding: 10px;
-        box-shadow: 1px solid #BDBDBD;
-        box-shadow: 3px 3px 3px 3px #BDBDBD;
+        box-shadow: 1px solid #bdbdbd;
+        box-shadow: 3px 3px 3px 3px #bdbdbd;
         margin-right: 20px;
         margin-bottom: 20px;
-    }
-
-</style>
-</head>
-<body>
-    <div id="commonTopHeader">
-{% include './menu/comTopHeader.html' %}      
-    </div>
+      }
+    </style>
+  </head>
+  <body>
+    <div id="commonTopHeader">{% include './menu/comTopHeader.html' %}</div>
 
     <div id="commonBodyContents">
-{% include './menu/sidemenu1.html' %}
-        <!-- commonSideMenu end-->
+      {% include './menu/sidemenu1.html' %}
+      <!-- commonSideMenu end-->
 
-        <div id="commonContent">
-            <div class="container">
-            <hr>
-             <div>
-                <div class="chartContents">
-                    <div>
-                        <div>CPU(%)</div> 
-                        <canvas id="cpuChart" width="375" height="400"></canvas>
-                    </div>
-                    <div>
-                        <div>DISK(%)</div>
-                        <canvas id="diskChart" width="375" height="400"></canvas>
-                    </div>
-                    <div>
-                        <div>MEMORY(%)</div>
-                        <canvas id="memoryChart" width="375" height="400"></canvas>
-                    </div>
-                    <div>
-                        <div>TRAFFIC(5M)</div>
-                        <canvas id="trafficChart" width="375" height="400"></canvas>
-                    </div>
-                    <!-- <div>
+      <div id="commonContent">
+        <div class="container">
+          <hr />
+          <div>
+            <div class="chartContents">
+              <div>
+                <div>CPU(%)</div>
+                <canvas id="cpuChart" width="375" height="400"></canvas>
+              </div>
+              <div>
+                <div>DISK(%)</div>
+                <canvas id="diskChart" width="375" height="400"></canvas>
+              </div>
+              <div>
+                <div>MEMORY(%)</div>
+                <canvas id="memoryChart" width="375" height="400"></canvas>
+              </div>
+              <div>
+                <div>TRAFFIC(5M)</div>
+                <canvas id="trafficChart" width="375" height="400"></canvas>
+              </div>
+              <!-- <div>
                         <canvas id="areaChart" width="375" height="420"></canvas>
                     </div> -->
-                    <div>
-                        <div>일별(건)</div>
-                        <canvas id="monthChart" width="792" height="400"></canvas>
-                    </div>
-                    <div>
-                        <div>시간별(건)</div>
-                        <canvas id="hourChart" width="792" height="400"></canvas>
-                    </div>
-                </div>
-                <!--<div class="chartContents2">
+              <div>
+                <div>일별(건)</div>
+                <canvas id="monthChart" width="792" height="400"></canvas>
+              </div>
+              <div>
+                <div>시간별(건)</div>
+                <canvas id="hourChart" width="792" height="400"></canvas>
+              </div>
+            </div>
+            <!--<div class="chartContents2">
                     <div>
                         <div>CPU</div> 
                         <canvas id="cpuChart" width="400"></canvas>
@@ -78,12 +75,12 @@
                         <canvas id="memoryChart" width="400"></canvas>
                     </div>
                 </div> -->
-             </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-<script>
+  </body>
+  <script>
     $(document).ready(function () {
         trafficChartSet();
         diskChartSet();
@@ -97,12 +94,13 @@
     function trafficChartSet(){
         let trafficChart = document.getElementById("trafficChart").getContext('2d');
         let result_service = {{result_service|tojson}};
+        console.log(result_service)
         let dateArr = [];
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
 
         for(let i = 0; i < result_service["data"]["rows"].length; i++){
-            let item = result_service["data"]["rows"][i];
+            let item = result_service["data"]["rows"][i][0];
             let setDate = new Date(item[0]).getTime();
             setDate = setDate + KR_TIME_DIFF;
             setDate = new Date(setDate).toISOString();
@@ -372,11 +370,12 @@
     function monthChartSet(){
         let monthChart = document.getElementById("monthChart").getContext('2d');
         let month = {{result_month|tojson}};
+
         let dateArr = [];
         let dataArr = [];
 
         for(let i = 0; i < month["data"]["rows"].length; i++){
-            let item = month["data"]["rows"][i];
+            let item = month["data"]["rows"][i][0];
             let date = item[2].substring(5, 10);
             let value = item[1];
 
@@ -407,16 +406,16 @@
         let dateArr = [];
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-        
+
         for(let i = 0; i < hour["data"]["rows"].length; i++){
-            let item = hour["data"]["rows"][i];
-            let setDate = new Date(item[2]).getTime();
-            setDate = setDate + KR_TIME_DIFF;
-            setDate = new Date(setDate).toISOString();
-            let date = setDate.substring(5, 10) + " " + setDate.substring(11, 19);
+            let item = hour["data"]["rows"][i][0];
+            // let setDate = new Date(item[2]).getTime();
+            // setDate = setDate + KR_TIME_DIFF;
+            // setDate = new Date(setDate).toISOString();
+            // let date = setDate.substring(5, 10) + " " + setDate.substring(11, 19);
             let value = item[1];
 
-            dateArr.unshift(date);
+            // dateArr.unshift(date);
             dataArr.unshift(value);
         }
 
@@ -436,6 +435,6 @@
             },
         });
     }
-</script>
+  </script>
 </html>
 

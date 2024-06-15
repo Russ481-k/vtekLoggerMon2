@@ -25,13 +25,17 @@ def convert_datetime_to_ns(dt):
     """datetime 객체를 나노초로 변환합니다."""
     return int(dt.timestamp() * 1_000_000_000)
 
-def machbase_from_to_traffic(date_from, date_to, where_con=""):
+def machbase_from_to_traffic(date_from, date_to, where_con="", table="inoutt",group_by="d000"):
     """주어진 기간에 대한 교통 데이터를 Machbase에서 조회합니다."""
     try:
-        url = "http://192.168.200.20:5654/db/query"
-        query = f"SELECT d000, count(d001) FROM inoutT WHERE d000 BETWEEN '{date_from}' AND '{date_to}' {where_con} GROUP BY d000"
+        url = "http://"+ envhost + ":5654/db/query"
+        if table == "inoutt" : 
+            query = f"SELECT d000, count(d001) FROM {table} WHERE d000 BETWEEN '{date_from}' AND '{date_to}' {where_con} GROUP BY {group_by}"
+        else : 
+            query = f"SELECT count FROM {table}"
         response = requests.get(url, params={"q": query})
         data = response.json()
+        # print(data)
         return data
     except Exception as e:
         print('접속 오류', e)
@@ -85,12 +89,13 @@ def mnujson():
     else:
         limitNumber = int(request.args.get("limitNumber"))
 
-    resultlength = dbconn.fromtoTraffic(datfr, datto, wherecon, limitNumber)
+    resultlength = dbconn.fromtoLength(datfr, datto, str(wherecon), limitNumber)
     result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
     setArray = []
+    # print(resultlength["rows"])
     if resultlength is not None : 
         if len(resultlength) > 0 : 
-            resultlength = len(resultlength["rows"])
+            resultlength = resultlength["rows"]
             
             columns = result["columns"]
             values = result["rows"]
@@ -100,7 +105,7 @@ def mnujson():
 
                 for t in range(len(item)):
                     if t == 0 :
-                        secondItem = item[t][20:]
+                        secondItem = item[t]
                     else:
                         if item[t] is not None : 
                             secondItem = item[t]
@@ -504,7 +509,7 @@ def okhome():
             if wherecon != '':
                 wherecon = wherecon
             if datfr == '':
-                datfr = curr - datetime.timedelta(minutes=2)
+                datfr = curr - datetime.timedelta(minutes=5)
             if datto == '':
                 datto = curr
             result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
@@ -566,11 +571,11 @@ def searchSel():
 
         # 현재 시간과 1시간 전 시간을 구합니다.
         now = datetime.datetime.now()
-        one_hour_ago = now - timedelta(hours=1)
+        five_minutes_ago = now - timedelta(minutes=5)
 
         # 데이터 조회
-        result_service = machbase_from_to_traffic(str(one_hour_ago)[:-3], str(now)[:-3])
-        
+        result_service = machbase_from_to_traffic(str(five_minutes_ago)[:-3], str(now)[:-3],"","inoutt")
+
         # 나머지 MySQL 쿼리 실행
         sql = "select * from areafrom limit 10"
         cur.execute(sql)
@@ -582,29 +587,14 @@ def searchSel():
         one_week_ago = now - timedelta(weeks=1)
 
         # 데이터 조회
-        result_month = machbase_from_to_traffic(str(one_week_ago)[:-3], str(now)[:-3])
+        result_month = machbase_from_to_traffic(str(one_week_ago)[:-3], str(now)[:-3],"","weeksum")
 
         # 현재 시간과 24시간 전 시간을 구합니다.
         one_day_ago = now - timedelta(days=1)
 
         # 데이터 조회
-        result_hour = machbase_from_to_traffic(str(one_day_ago)[:-3], str(now)[:-3])
-        print(
-            "result_service",
-            result_service,
-            "result_area",
-            result_area,
-            "psutil.cpu_times_percent().idle",
-            psutil.cpu_times_percent().idle,
-            "psutil.cpu_percent()",
-            psutil.cpu_percent(),
-            "result_disk",
-            result_disk,
-            "result_month",
-            result_month,
-            "result_hour",
-            result_hour
-            )
+        result_hour = machbase_from_to_traffic(str(one_day_ago)[:-3], str(now)[:-3],"","daysum")
+
         db.close()
 
         return render_template("stat/dashinit.html", 
@@ -693,5 +683,6 @@ def userDelete():
 
 if __name__ == '__main__':
     # app.degub = True
-    app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
-    # app.run(debug=True, port=80, host='0.0.0.0')
+    # app.run(host='0.0.0.0', port="443", ssl_context = "adhoc")
+    app.run(debug=True, port=80, host='0.0.0.0')
+
