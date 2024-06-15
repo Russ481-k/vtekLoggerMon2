@@ -99,13 +99,13 @@
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
 
-        for(let i = 0; i < result_service["data"]["rows"].length; i++){
-            let item = result_service["data"]["rows"][i][0];
-            let setDate = new Date(item[0]).getTime();
+        for(let i = 0; i < result_service["rows"].length; i++){
+            let item = result_service["rows"][i];
+            let setDate = new Date(item[1]).getTime();
             setDate = setDate + KR_TIME_DIFF;
             setDate = new Date(setDate).toISOString();
             let date = setDate.substring(11, 16);
-            let value = item[1];
+            let value = item[0];
 
             dateArr.push(date);
             dataArr.push(value);
@@ -145,8 +145,8 @@
         let dateArr = [];
         let dataArr = [];
 
-        for(let i = 0; i < resultArr["data"]["rows"].length; i++){
-            let item = resultArr["data"]["rows"][i];
+        for(let i = 0; i < resultArr["rows"].length; i++){
+            let item = resultArr["rows"][i];
             let date = item[0].substring(5, 10);
             let value = item[1];
 
@@ -373,9 +373,9 @@
 
         let dateArr = [];
         let dataArr = [];
-
-        for(let i = 0; i < month["data"]["rows"].length; i++){
-            let item = month["data"]["rows"][i][0];
+        
+        for(let i = 0; i < month["rows"].length; i++){
+            let item = month["rows"][i][0];
             let date = item[2].substring(5, 10);
             let value = item[1];
 
@@ -407,8 +407,8 @@
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
 
-        for(let i = 0; i < hour["data"]["rows"].length; i++){
-            let item = hour["data"]["rows"][i][0];
+        for(let i = 0; i < hour["rows"].length; i++){
+            let item = hour["rows"][i][0];
             // let setDate = new Date(item[2]).getTime();
             // setDate = setDate + KR_TIME_DIFF;
             // setDate = new Date(setDate).toISOString();

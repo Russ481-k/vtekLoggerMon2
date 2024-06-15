@@ -32,28 +32,33 @@ def selectUsers(uid, upw):
             connection.close()
     return row
 
-def fromtoTraffic(date_from, date_to, wherecon, limit):
+def fromtoTraffic(date_from, date_to, wherecon="", table="inoutt",group_by="d001", limit=0):
     url = "http://"+ envhost + ":5654/db/query"
 
     query = ""
-    if limit > 0:
-        query = f"SELECT d001, count(d000) FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by d00 order by d001 desc limit {str(limit)}"
+    if table != "inoutt":
+        query = f"SELECT count FROM {table}"    
+    elif limit > 0:
+        query = f"SELECT count(d000), d001 FROM {table} WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by {group_by} order by d001 desc limit {str(limit)}"
     else:
-        query = f"SELECT d001, count(d000) FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by d00 order by d001 desc"
+        query = f"SELECT count(d000), d001 FROM {table} WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by {group_by} order by d001 desc"
     try:
         response = requests.get(url, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
         result = response.json()["data"]
+
         return result
+
     except Exception as e:
         print('접속오류', e)
 
 def fromtoLength(date_from, date_to, wherecon, limit):
     url = "http://"+ envhost + ":5654/db/query"
     query = f"SELECT COUNT(*) FROM (SELECT d001, d000 FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} ORDER BY d001 DESC LIMIT {str(limit)});"
-    print("test",query)
+    print(query)
     try:
         response = requests.get(url, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
         result = response.json()["data"]
+        
         return result
     except Exception as e:
         print('접속오류', e)
@@ -83,20 +88,24 @@ def fromtoLength(date_from, date_to, wherecon, limit):
 
 
 def fromtoTrafficLimit(date_from, date_to, wherecon, req):
+
     url = "http://"+ envhost + ":5654/db/query"
     query=""
-    draw = req.get("start")
-    pageLength = req.get("length")
-    rowIndex = req.get("order[0][column]")
-    sort = req.get("order[0][dir]")
-    rowIndexColumn = req.get("columns[" + rowIndex + "][data]")
-    firstLimit = int(draw)
-    lastLimit = int(pageLength)
-    query = f"SELECT * FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} order by d001 {str(sort)} limit {str(firstLimit)}, {str(lastLimit)}"
+    draw = 0
+    pageLength = 50
+    sort = ""
+    if(len(req)!=0):
+        draw = req.get("start")
+        pageLength = req.get("length")
+        sort = req.get("order[0][dir]")
+
+    firstLimit = draw
+    lastLimit = pageLength
+    query = f"SELECT * FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} order by d001 {sort} limit {firstLimit}, {lastLimit}"
     try:
         response = requests.get(url, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
         result = response.json()["data"]
-        print(query)
+
         return result
     except Exception as e:
         print('접속오류', e)

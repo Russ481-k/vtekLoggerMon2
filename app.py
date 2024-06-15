@@ -17,30 +17,10 @@ app = Flask(__name__)
 app.secret_key = 'fsdfsfgsfdg3234'
 session_text = '로그인 해주세요.'
 
-
-##############################################################
-# 마크베이스 연동
-##############################################################
-def convert_datetime_to_ns(dt):
-    """datetime 객체를 나노초로 변환합니다."""
-    return int(dt.timestamp() * 1_000_000_000)
-
-def machbase_from_to_traffic(date_from, date_to, where_con="", table="inoutt",group_by="d000"):
-    """주어진 기간에 대한 교통 데이터를 Machbase에서 조회합니다."""
-    try:
-        url = "http://"+ envhost + ":5654/db/query"
-        if table == "inoutt" : 
-            query = f"SELECT d000, count(d001) FROM {table} WHERE d000 BETWEEN '{date_from}' AND '{date_to}' {where_con} GROUP BY {group_by}"
-        else : 
-            query = f"SELECT count FROM {table}"
-        response = requests.get(url, params={"q": query})
-        data = response.json()
-        # print(data)
-        return data
-    except Exception as e:
-        print('접속 오류', e)
-        return None
-##############################################################
+rootPath = os.path.dirname(os.path.abspath(__file__)) 
+filePath = rootPath + "/menu.json"
+with open(filePath, 'r') as file:
+    jsonDump = json.load(file)
 
 @app.route('/')
 def home():
@@ -51,94 +31,115 @@ def mnujson():
     curr = datetime.datetime.now()
     datfr = ''
     datto = ''
-    rootPath = os.path.dirname(os.path.abspath(__file__)) 
-    filePath = rootPath + "/menu.json"
-    with open(filePath, 'r') as file:
-        jsonDump = json.load(file)
-    if(request.args.get("menuIndex") == ''):
-        splitStr = jsonDump["menuItems"]["1"].split(",")
-    else:
-        splitStr = jsonDump["menuItems"][request.args.get("menuIndex")].split(",")
-    sqlStr = ''
+    wherecon=''
+    resultlength = 0
+    menuIndex = request.path[-2:]
     
+    req = request.args
+    menuIndex = req.get("menuIndex")
+    if(menuIndex==None):
+        menuIndex = "01"
+    else:
+        menuIndex = menuIndex[-2:]
+
+    splitStr = jsonDump["menuItems"][menuIndex].split(",")
+    sqlStr = ''
+    limitNumber = 0
+
     for i in range(len(splitStr)):
+
+
         if sqlStr == '':
             sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
         else :
             sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-        
-    if(request.args.get("whereplus") != None):
-        wherecon = request.args.get("whereplus")
-    else:
         wherecon = sqlStr
-        
-    if request.args.get("datefrom") == '':
+
+
+
+    if((req.get("datefrom") == None)|(req.get("datefrom") == "")):
         datfr = curr - datetime.timedelta(minutes=1)
         datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     else : 
-        datfr = request.args.get("datefrom") + " " + request.args.get("timefrom") + ":00"
-        
-    if request.args.get("dateto") == '':
+        datfr = req.get("datefrom") + " " + req.get("timefrom") + ":00"
+
+    if((req.get("dateto") == None)|(req.get("dateto") == "")):
         datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     else :
-        datto = request.args.get("dateto") + " " + request.args.get("datetimetofrom") + ":00"
+        datto = req.get("dateto") + " " + req.get("datetimetofrom") + ":00"
     
-    
-    if request.args.get("limitNumber") == '':
-        limitNumber = 0
+    if((req.get("limitNumber") == None)|(req.get("limitNumber") == "")):
+        limitNumber = 0  
     else:
-        limitNumber = int(request.args.get("limitNumber"))
-
-    resultlength = dbconn.fromtoLength(datfr, datto, str(wherecon), limitNumber)
-    result = dbconn.fromtoTrafficLimit(datfr, datto, str(wherecon), request.args)
+        limitNumber = int(req.get("limitNumber"))
+    
+    resultlength = dbconn.fromtoLength(datfr, datto, wherecon, limitNumber)
+    result = dbconn.fromtoTrafficLimit(datfr, datto, wherecon, req)
+    
     setArray = []
-    # print(resultlength["rows"])
-    if resultlength is not None : 
-        if len(resultlength) > 0 : 
-            resultlength = resultlength["rows"]
-            
-            columns = result["columns"]
-            values = result["rows"]
-            for i in range(len(values)):
-                setObject = {}
-                item = values[i]
 
-                for t in range(len(item)):
-                    if t == 0 :
+    if len(resultlength) > 0 : 
+        resultlength = resultlength["rows"]
+        
+        columns = result["columns"]
+        values = result["rows"]
+        for i in range(len(values)):
+            setObject = {}
+            item = values[i]
+
+            for t in range(len(item)):
+                if t == 0 :
+                    secondItem = item[t]
+                else:
+                    if item[t] is not None : 
                         secondItem = item[t]
-                    else:
-                        if item[t] is not None : 
-                            secondItem = item[t]
-                        else : 
-                            secondItem = "-"
-                    setObject[columns[t].lower()] = secondItem
+                    else : 
+                        secondItem = "-"
+                setObject[columns[t].lower()] = secondItem
 
-                setArray.append(setObject)
+            setArray.append(setObject)
         else:
             resultlength = 0
 
-    resultData = {
-        "data": setArray,
-        "recordsTotal": resultlength,
-        "recordsFiltered": resultlength,
-    }
+
+        resultData = {
+            "data": setArray,
+            "recordsTotal": [[resultlength]],
+            "recordsFiltered": [[resultlength]],
+        }
+        print(resultData)
     return jsonify(resultData)
 
 @app.route('/subm/mnu001', methods=['GET'])
 def mnu001f():
     if "userName" in session:
+       if "userName" in session:
         curr = datetime.datetime.now()
         wherecon = ''
         datfr = ''
         datto = ''
-        
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
+
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TRAF")
         return render_template("./subm/mnu001.html", result=result, cond=cond)
     else:
@@ -149,17 +150,31 @@ def mnu001f():
 def mnu002f():
     if "userName" in session:
         curr = datetime.datetime.now()
-        wherecon = 'Threat'
+        wherecon = ''
         datfr = ''
         datto = ''
-        
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
+
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("THRE")
         
         return render_template("./subm/mnu002.html", result=result, cond=cond)
@@ -170,18 +185,33 @@ def mnu002f():
 @app.route('/subm/mnu003', methods=['GET', 'POST'])
 def mnu003f():
     if "userName" in session:
+      if "userName" in session:
         curr = datetime.datetime.now()
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("URLF")
         return render_template("./subm/mnu003.html", result = result, cond = cond)
     else:
@@ -195,14 +225,28 @@ def mnu004f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("WILD")
         return render_template("./subm/mnu004.html", result = result, cond = cond)
     else:
@@ -216,14 +260,28 @@ def mnu005f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("DATA")
         return render_template("./subm/mnu005.html", result = result, cond = cond)
     else:
@@ -237,14 +295,28 @@ def mnu006f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("HIPM")
         return render_template("./subm/mnu006.html", result = result, cond = cond)
     else:
@@ -258,14 +330,28 @@ def mnu007f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("GLOB")
         return render_template("./subm/mnu007.html", result = result, cond = cond)
     else:
@@ -279,14 +365,28 @@ def mnu008f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("IPTA")
         return render_template("./subm/mnu008.html", result = result, cond = cond)
     else:
@@ -300,14 +400,28 @@ def mnu009f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("USER")
         return render_template("./subm/mnu009.html", result = result, cond = cond)
     else:
@@ -321,14 +435,28 @@ def mnu010f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("DESC")
         return render_template("./subm/mnu010.html", result = result, cond = cond)
     else:
@@ -342,14 +470,28 @@ def mnu011f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TUNN")
         return render_template("./subm/mnu011.html", result = result, cond = cond)
     else:
@@ -363,14 +505,28 @@ def mnu012f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("CONF")
         return render_template("./subm/mnu012.html", result = result, cond = cond)
     else:
@@ -384,14 +540,28 @@ def mnu013f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("SYST")
         return render_template("./subm/mnu013.html", result = result, cond = cond)
     else:
@@ -405,14 +575,28 @@ def mnu014f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("ALAR")
         return render_template("./subm/mnu014.html", result = result, cond = cond)
     else:
@@ -426,14 +610,28 @@ def mnu015f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("AUTH")
         return render_template("./subm/mnu015.html", result = result, cond = cond)
     else:
@@ -447,14 +645,28 @@ def mnu016f():
         wherecon = ''
         datfr = ''
         datto = ''
+        menuIndex = request.path[-2:]
+        splitStr = jsonDump["menuItems"][menuIndex].split(",")
 
+        sqlStr = ''
+        for i in range(len(splitStr)):
+            if sqlStr == '':
+                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            else :
+                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
+            
+        if(request.args.get("whereplus") != None):
+            wherecon = request.args.get("whereplus")
+        else:
+            wherecon = sqlStr
+            
         if datfr == '':
             datfr = curr - datetime.timedelta(minutes=1)
             datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         if datto == '':
             datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-
-        result = dbconn.fromtoTraffic(datfr, datto, str(wherecon), 0)
+        
+        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("UNIF")
         return render_template("./subm/mnu016.html", result = result, cond = cond)
     else:
@@ -499,7 +711,7 @@ def okhome():
             if datto == '':
                 datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             result = []
-            dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+            dbconn.fromtoTraffic(datfr, datto, wherecon)
             cond = dbconn.menuSet("TRAF")
             return render_template('./stat/indexStart.html', result=result, cond=cond)
         else:
@@ -512,7 +724,7 @@ def okhome():
                 datfr = curr - datetime.timedelta(minutes=5)
             if datto == '':
                 datto = curr
-            result = dbconn.fromtoTraffic(datfr, datto, wherecon, 0)
+            result = dbconn.fromtoTraffic(datfr, datto, wherecon)
             cond = dbconn.menuSet("TRAF")
             return render_template("./stat/indexStart.html", result=result, cond=cond)
     else:
@@ -574,7 +786,7 @@ def searchSel():
         five_minutes_ago = now - timedelta(minutes=5)
 
         # 데이터 조회
-        result_service = machbase_from_to_traffic(str(five_minutes_ago)[:-3], str(now)[:-3],"","inoutt")
+        result_service = dbconn.fromtoTraffic(str(five_minutes_ago)[:-3], str(now)[:-3], "", "inoutt","d001",0)
 
         # 나머지 MySQL 쿼리 실행
         sql = "select * from areafrom limit 10"
@@ -587,13 +799,13 @@ def searchSel():
         one_week_ago = now - timedelta(weeks=1)
 
         # 데이터 조회
-        result_month = machbase_from_to_traffic(str(one_week_ago)[:-3], str(now)[:-3],"","weeksum")
+        result_month = dbconn.fromtoTraffic(str(one_week_ago)[:-3], str(now)[:-3], "", "weeksum","",0)
 
         # 현재 시간과 24시간 전 시간을 구합니다.
         one_day_ago = now - timedelta(days=1)
 
         # 데이터 조회
-        result_hour = machbase_from_to_traffic(str(one_day_ago)[:-3], str(now)[:-3],"","daysum")
+        result_hour = dbconn.fromtoTraffic(str(one_day_ago)[:-3], str(now)[:-3], "", "daysum","",0)
 
         db.close()
 
