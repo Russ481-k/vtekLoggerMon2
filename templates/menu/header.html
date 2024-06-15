@@ -188,7 +188,7 @@
         );
 
         if (nowDate.getMinutes() - 5 < 0) {
-          nowDate.setHours(nowDate.getHours() - 1);
+          nowDate.setHours(nowDate.getHours() - 2);
           nowDate.setMinutes(
             60 - Math.abs(String(nowDate.getMinutes() - 5).padStart(2, "0"))
           );
@@ -198,6 +198,10 @@
               String(nowDate.getMinutes()).padStart(2, "0")
           );
         } else {
+          nowDate.setHours(nowDate.getHours() - 1);
+          nowDate.setMinutes(
+            60 - Math.abs(String(nowDate.getMinutes() - 5).padStart(2, "0"))
+          );
           $("#timefrom").val(
             String(nowDate.getHours()).padStart(2, "0") +
               ":" +
