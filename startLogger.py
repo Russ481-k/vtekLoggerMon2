@@ -4,4 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 folderDirectory = os.getenv('folderdirectory')
-os.system(f'nohup python3 {folderDirectory}/vtekLoggerMon2/udpDaemonMachbase.py&')
+udp_daemon_script = os.path.join(folderDirectory, 'vtekLoggerMon2', 'udpDaemonMachbase.py')
+pid_file = '/tmp/udpDaemonMachbase.pid'
+
+# UDP 데몬 실행
+os.system(f'nohup python3 {udp_daemon_script} & echo $! > {pid_file}')
+print(f"UDP daemon started and PID saved to {pid_file}")

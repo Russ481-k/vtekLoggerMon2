@@ -395,15 +395,34 @@
         let month = {{result_month|tojson}};
         let dateArr = [];
         let dataArr = [];
-        
+
         // for(let i = 0; i < month["rows"].length; i++){
         for(let i = 0; i < 10; i++){
             let item = month["rows"][i];
-            let date = item[1].substring(5, 10);
-            let value = item[0];
-            
-            dateArr.unshift(date);
-            dataArr.unshift(value);
+            let date = new Date(item[1]/1000000)
+
+            if(month["rows"].length>=10){
+                let item = month["rows"][i];
+
+                let date = new Date(item[1]/1000000)
+                
+                date = (date.getFullYear()>10?date.getFullYear():"0"+date.getFullYear()) + "-" 
+                 + ((date.getMonth()+1)>10?(date.getMonth()+1):"0"+(date.getMonth()+1)) + "-" 
+                 + (date.getDate()>10?date.getDate():"0"+date.getDate())
+
+                let value = item[0];
+
+                dateArr.unshift(date);
+                dataArr.unshift(value);
+            }else{
+                let subIndex = 10 - month["rows"].length
+                for(let i = subIndex; i < 10 ; i++){
+                    date = (date.getMonth()+1) + "-" + (i > 10 ? i : "0" + i)
+                    let value = 0
+                    dateArr.unshift(date);
+                    dataArr.unshift(value);
+                }
+            }
         }
         
         new Chart(monthChart, {
@@ -432,15 +451,29 @@
 
         // for(let i = 0; i < hour["rows"].length; i++){
         for(let i = 0; i < 24; i++){
-            let item = hour["rows"][i];
-            let setDate = new Date(item[1]).getTime();
-            setDate = setDate + KR_TIME_DIFF;
-            setDate = new Date(setDate).toISOString();
-            let date = setDate.substring(5, 10) + " " + setDate.substring(11, 14) + "00";
-            let value = item[0];
+            if(hour["rows"].length>=24){
+                let item = hour["rows"][i];
 
-            dateArr.unshift(date);
-            dataArr.unshift(value);
+                let date = new Date(item[1]/1000000)
+
+                date = (date.getHours()>10?date.getHours():"0"+date.getHours()) + ":" 
+                    + (date.getMinutes()>10?date.getMinutes():"0"+date.getMinutes()) + ":" 
+                    + (date.getSeconds()>10?date.getSeconds():"0"+date.getSeconds())
+
+                let value = item[0];
+
+                dateArr.unshift(date);
+                dataArr.unshift(value);
+            }else{
+                let subIndex = 24 - hour["rows"].length
+                for(let i = subIndex; i < 24 ; i++){
+                    date = "00:" + (i > 10 ? i : "0" + i) + ":00"
+                    let value = 0
+                    dateArr.unshift(date);
+                    dataArr.unshift(value);
+                }
+            }
+        
         }
 
         new Chart(hourChart, {
