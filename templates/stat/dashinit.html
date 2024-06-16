@@ -395,32 +395,39 @@
         let month = {{result_month|tojson}};
         let dateArr = [];
         let dataArr = [];
+        let buf_month = 1
+        let buf_day = 1
+
 
         // for(let i = 0; i < month["rows"].length; i++){
         for(let i = 0; i < 10; i++){
-            let item = month["rows"][i];
-            let date = new Date(item[1]/1000000)
-
+            
             if(month["rows"].length>=10){
                 let item = month["rows"][i];
-
-                let date = new Date(item[1]/1000000)
-                
-                date = (date.getFullYear()>10?date.getFullYear():"0"+date.getFullYear()) + "-" 
-                 + ((date.getMonth()+1)>10?(date.getMonth()+1):"0"+(date.getMonth()+1)) + "-" 
-                 + (date.getDate()>10?date.getDate():"0"+date.getDate())
-
+                let date = item[1].substring(5, 10);
                 let value = item[0];
 
                 dateArr.unshift(date);
                 dataArr.unshift(value);
+                buf_month = month["rows"][i][1]
             }else{
-                let subIndex = 10 - month["rows"].length
-                for(let i = subIndex; i < 10 ; i++){
-                    date = (date.getMonth()+1) + "-" + (i > 10 ? i : "0" + i)
+                if(month["rows"].length>i){
+                    let item = month["rows"][i];
+                  
+                    let date = item[1].substring(5, 10);
+                    let value = item[0];
+
+                    dateArr.unshift(date);
+                    dataArr.unshift(value);
+                    buf_month = month["rows"][i][1].substring(5,7)
+                    buf_day = month["rows"][i][1].substring(8,10)
+                }else{
+                    console.log( buf_month)
+                    date =  buf_month + "-" +(Number(buf_day)-1)
                     let value = 0
                     dateArr.unshift(date);
                     dataArr.unshift(value);
+                    buf_day--
                 }
             }
         }
@@ -452,26 +459,21 @@
         // for(let i = 0; i < hour["rows"].length; i++){
         for(let i = 0; i < 24; i++){
             if(hour["rows"].length>=24){
+
                 let item = hour["rows"][i];
-
-                let date = new Date(item[1]/1000000)
-
-                date = (date.getHours()>10?date.getHours():"0"+date.getHours()) + ":" 
-                    + (date.getMinutes()>10?date.getMinutes():"0"+date.getMinutes()) + ":" 
-                    + (date.getSeconds()>10?date.getSeconds():"0"+date.getSeconds())
-
+                let setDate = new Date(item[1]).getTime();
+                setDate = setDate + KR_TIME_DIFF;
+                setDate = new Date(setDate).toISOString();
+                let date = setDate.substring(5, 10) + " " + setDate.substring(11, 14) + "00";
                 let value = item[0];
 
                 dateArr.unshift(date);
                 dataArr.unshift(value);
             }else{
-                let subIndex = 24 - hour["rows"].length
-                for(let i = subIndex; i < 24 ; i++){
-                    date = "00:" + (i > 10 ? i : "0" + i) + ":00"
-                    let value = 0
-                    dateArr.unshift(date);
-                    dataArr.unshift(value);
-                }
+                date = "00:" + (i > 10 ? i : "0" + i) + ":00"
+                let value = 0
+                dateArr.unshift(date);
+                dataArr.unshift(value);
             }
         
         }
