@@ -98,7 +98,7 @@ def mnujson():
             setArray.append(setObject)
     else:
         resultlength = 0
-    print("resultlength",resultlength)
+
     resultData = {
         "data": setArray,
         "recordsTotal": resultlength,
@@ -779,10 +779,10 @@ def searchSel():
 
         # 현재 시간과 1시간 전 시간을 구합니다.
         now = datetime.datetime.now()
-        five_minutes_ago = now - timedelta(minutes=5)
+        one_hours_ago = now - timedelta(hours=1)
 
-        # 데이터 조회
-        result_service = dbconn.fromtoTraffic(str(five_minutes_ago)[:-3], str(now)[:-3], "", "inoutt","d001",0)
+        # TRAFFIC 조회
+        result_service = dbconn.fromtoTraffic(str(one_hours_ago)[:-3], str(now)[:-3], "", "inoutt","d001",0)
 
         # 나머지 MySQL 쿼리 실행
         sql = "select * from areafrom limit 10"
@@ -792,13 +792,13 @@ def searchSel():
         result_disk = psutil.disk_usage(os.getcwd())
         
         # 현재 시간과 일주일 전 시간을 구합니다.
-        one_week_ago = now - timedelta(weeks=1)
+        ten_days_ago = now - timedelta(days=10)
 
         # 데이터 조회
-        result_month = dbconn.fromtoTraffic(str(one_week_ago)[:-3], str(now)[:-3], "", "weeksum","",0)
+        result_month = dbconn.fromtoTraffic(str(ten_days_ago)[:-3], str(now)[:-3], "", "weeksum","",0)
 
         # 현재 시간과 24시간 전 시간을 구합니다.
-        one_day_ago = now - timedelta(days=1)
+        one_day_ago = now - timedelta(hours=24)
 
         # 데이터 조회
         result_hour = dbconn.fromtoTraffic(str(one_day_ago)[:-3], str(now)[:-3], "", "daysum","",0)

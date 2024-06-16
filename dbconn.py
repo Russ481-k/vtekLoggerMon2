@@ -37,7 +37,7 @@ def fromtoTraffic(date_from, date_to, wherecon="", table="inoutt",group_by="d001
 
     query = ""
     if table != "inoutt":
-        query = f"SELECT count FROM {table}"    
+        query = f"SELECT count, time FROM {table}"    
     elif limit > 0:
         query = f"SELECT count(d000), d001 FROM {table} WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by {group_by} order by d001 desc limit {str(limit)}"
     else:
@@ -54,7 +54,7 @@ def fromtoTraffic(date_from, date_to, wherecon="", table="inoutt",group_by="d001
 def fromtoLength(date_from, date_to, wherecon, limit):
     url = "http://"+ envhost + ":5654/db/query"
     query = f"SELECT COUNT(*) FROM (SELECT d001, d000 FROM inoutT WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} ORDER BY d001 DESC LIMIT {str(limit)});"
-    print(query)
+
     try:
         response = requests.get(url, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
         result = response.json()["data"]

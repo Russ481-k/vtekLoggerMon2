@@ -94,31 +94,54 @@
     function trafficChartSet(){
         let trafficChart = document.getElementById("trafficChart").getContext('2d');
         let result_service = {{result_service|tojson}};
-        console.log(result_service)
+
         let dateArr = [];
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+        let valueBuf = 0
 
-        for(let i = 0; i < result_service["rows"].length; i++){
+        let next_item = ""
+        let setNextDate = ""
+
+        let result_service_length = result_service["rows"].length
+
+        for(let i = 0; i < result_service_length ; i++){
             let item = result_service["rows"][i];
             let setDate = new Date(item[1]).getTime();
-            setDate = setDate + KR_TIME_DIFF;
+            setDate += KR_TIME_DIFF;
             setDate = new Date(setDate).toISOString();
-            let date = setDate.substring(11, 16);
+            dateNowSub = setDate.substring(14, 16)%5
+
+
+
+            if(i < result_service_length-1){
+                next_item =  result_service["rows"][i+1];
+                setNextDate = new Date(next_item[1])?.getTime();
+                setNextDate += KR_TIME_DIFF;
+                setNextDate = new Date(setNextDate)?.toISOString();
+                dateNextSub = setNextDate?.substring(14, 16)%5
+            }   
+
+            let date = setDate?.substring(11, 16);
             let value = item[0];
 
-            dateArr.push(date);
-            dataArr.push(value);
+            if((dateNowSub === 0) && (dateNowSub !== dateNextSub) ){
+                dateArr.push(date);
+                dataArr.push(valueBuf);
+                valueBuf = 0;
+            } else {
+                valueBuf += value
+            } 
         }
 
         new Chart(trafficChart, {
             type: "line",
             data: {
-                labels: dateArr,
+                labels: dateArr.reverse(),
                 datasets: [
                     {
                         label: "TRAFFIC",
-                        data: dataArr,
+                        data: dataArr.reverse(),
                         backgroundColor: "#ff5377",
                         borderColor: "#ff5377",
                         borderWidth: 2,
@@ -370,19 +393,19 @@
     function monthChartSet(){
         let monthChart = document.getElementById("monthChart").getContext('2d');
         let month = {{result_month|tojson}};
-
         let dateArr = [];
         let dataArr = [];
         
-        for(let i = 0; i < month["rows"].length; i++){
-            let item = month["rows"][i][0];
-            let date = item[2].substring(5, 10);
-            let value = item[1];
-
+        // for(let i = 0; i < month["rows"].length; i++){
+        for(let i = 0; i < 10; i++){
+            let item = month["rows"][i];
+            let date = item[1].substring(5, 10);
+            let value = item[0];
+            
             dateArr.unshift(date);
             dataArr.unshift(value);
         }
-
+        
         new Chart(monthChart, {
             type: "bar",
             data: {
@@ -407,15 +430,16 @@
         let dataArr = [];
         let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
 
-        for(let i = 0; i < hour["rows"].length; i++){
-            let item = hour["rows"][i][0];
-            // let setDate = new Date(item[2]).getTime();
-            // setDate = setDate + KR_TIME_DIFF;
-            // setDate = new Date(setDate).toISOString();
-            // let date = setDate.substring(5, 10) + " " + setDate.substring(11, 19);
-            let value = item[1];
+        // for(let i = 0; i < hour["rows"].length; i++){
+        for(let i = 0; i < 24; i++){
+            let item = hour["rows"][i];
+            let setDate = new Date(item[1]).getTime();
+            setDate = setDate + KR_TIME_DIFF;
+            setDate = new Date(setDate).toISOString();
+            let date = setDate.substring(5, 10) + " " + setDate.substring(11, 14) + "00";
+            let value = item[0];
 
-            // dateArr.unshift(date);
+            dateArr.unshift(date);
             dataArr.unshift(value);
         }
 
