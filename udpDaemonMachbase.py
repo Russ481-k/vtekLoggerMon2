@@ -36,7 +36,7 @@ async def post_data(result):
     }
     async with aiohttp.ClientSession() as session:
         async with session.post(url, headers=headers, data=json.dumps(result)) as response:
-            print(await response.text())
+            await response.text()
 
 def receive_packets():
     while True:
@@ -48,6 +48,7 @@ async def process_packets():
     while True:
         if not packet_queue.empty():
             data = packet_queue.get()
+            print(cnt)
             try:
                 strdata = data.decode('utf-8')
                 strdata = strdata.replace('"', '').replace("'", '')
@@ -83,7 +84,7 @@ async def process_packets():
                     cnt += 1
                     receiveDateTime = datetime.fromtimestamp(result["data"]["rows"][0][1]/1000000000)
                     postDateTime = datetime.now()
-                    print("count:", cnt, "receiveDateTime", receiveDateTime, "postDateTime", postDateTime)
+                    print("count:", cnt, "data", result["data"]["rows"])
                     # 비동기로 POST 요청 보내기
                     await post_data(result)
 

@@ -33,6 +33,7 @@ def mnujson():
     datto = ''
     wherecon=''
     resultlength = 0
+    csvResult = ''
     menuIndex = request.path[-2:]
     
     req = request.args
@@ -71,10 +72,14 @@ def mnujson():
         limitNumber = 0  
     else:
         limitNumber = int(req.get("limitNumber"))
-    
+
+    if( req.get("format") == "csv"):
+        csvResult = dbconn.fromtoTrafficLimit(datfr, datto, wherecon, req, "csv")
+        print(result)
+    setArray = [] 
+
     resultlength = dbconn.fromtoLength(datfr, datto, wherecon, limitNumber)
     result = dbconn.fromtoTrafficLimit(datfr, datto, wherecon, req)
-    setArray = []
 
     if len(resultlength) > 0 : 
         resultlength = resultlength["rows"]
@@ -109,35 +114,8 @@ def mnujson():
 @app.route('/subm/mnu001', methods=['GET'])
 def mnu001f():
     if "userName" in session:
-       if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TRAF")
-        return render_template("./subm/mnu001.html", result=result, cond=cond)
+        return render_template("./subm/mnu001.html", result=None, cond=cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -145,35 +123,8 @@ def mnu001f():
 @app.route('/subm/mnu002', methods=['GET', 'POST'])
 def mnu002f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("THRE")
-        
-        return render_template("./subm/mnu002.html", result=result, cond=cond)
+        return render_template("./subm/mnu002.html", result=None, cond=cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -181,35 +132,8 @@ def mnu002f():
 @app.route('/subm/mnu003', methods=['GET', 'POST'])
 def mnu003f():
     if "userName" in session:
-      if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("URLF")
-        return render_template("./subm/mnu003.html", result = result, cond = cond)
+        return render_template("./subm/mnu003.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -217,34 +141,8 @@ def mnu003f():
 @app.route('/subm/mnu004', methods=['GET', 'POST'])
 def mnu004f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("WILD")
-        return render_template("./subm/mnu004.html", result = result, cond = cond)
+        return render_template("./subm/mnu004.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -252,34 +150,8 @@ def mnu004f():
 @app.route('/subm/mnu005', methods=['GET', 'POST'])
 def mnu005f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("DATA")
-        return render_template("./subm/mnu005.html", result = result, cond = cond)
+        return render_template("./subm/mnu005.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -287,34 +159,8 @@ def mnu005f():
 @app.route('/subm/mnu006', methods=['GET', 'POST'])
 def mnu006f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("HIPM")
-        return render_template("./subm/mnu006.html", result = result, cond = cond)
+        return render_template("./subm/mnu006.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -322,34 +168,8 @@ def mnu006f():
 @app.route('/subm/mnu007', methods=['GET', 'POST'])
 def mnu007f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("GLOB")
-        return render_template("./subm/mnu007.html", result = result, cond = cond)
+        return render_template("./subm/mnu007.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -357,34 +177,8 @@ def mnu007f():
 @app.route('/subm/mnu008', methods=['GET', 'POST'])
 def mnu008f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("IPTA")
-        return render_template("./subm/mnu008.html", result = result, cond = cond)
+        return render_template("./subm/mnu008.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -392,34 +186,8 @@ def mnu008f():
 @app.route('/subm/mnu009', methods=['GET', 'POST'])
 def mnu009f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("USER")
-        return render_template("./subm/mnu009.html", result = result, cond = cond)
+        return render_template("./subm/mnu009.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -427,34 +195,8 @@ def mnu009f():
 @app.route('/subm/mnu010', methods=['GET', 'POST'])
 def mnu010f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("DESC")
-        return render_template("./subm/mnu010.html", result = result, cond = cond)
+        return render_template("./subm/mnu010.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -462,34 +204,8 @@ def mnu010f():
 @app.route('/subm/mnu011', methods=['GET', 'POST'])
 def mnu011f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("TUNN")
-        return render_template("./subm/mnu011.html", result = result, cond = cond)
+        return render_template("./subm/mnu011.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -497,34 +213,8 @@ def mnu011f():
 @app.route('/subm/mnu012', methods=['GET', 'POST'])
 def mnu012f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("CONF")
-        return render_template("./subm/mnu012.html", result = result, cond = cond)
+        return render_template("./subm/mnu012.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -532,34 +222,8 @@ def mnu012f():
 @app.route('/subm/mnu013', methods=['GET', 'POST'])
 def mnu013f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("SYST")
-        return render_template("./subm/mnu013.html", result = result, cond = cond)
+        return render_template("./subm/mnu013.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -567,34 +231,8 @@ def mnu013f():
 @app.route('/subm/mnu014', methods=['GET', 'POST'])
 def mnu014f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("ALAR")
-        return render_template("./subm/mnu014.html", result = result, cond = cond)
+        return render_template("./subm/mnu014.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -602,34 +240,8 @@ def mnu014f():
 @app.route('/subm/mnu015', methods=['GET', 'POST'])
 def mnu015f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("AUTH")
-        return render_template("./subm/mnu015.html", result = result, cond = cond)
+        return render_template("./subm/mnu015.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')
@@ -637,34 +249,8 @@ def mnu015f():
 @app.route('/subm/mnu016', methods=['GET', 'POST'])
 def mnu016f():
     if "userName" in session:
-        curr = datetime.datetime.now()
-        wherecon = ''
-        datfr = ''
-        datto = ''
-        menuIndex = request.path[-2:]
-        splitStr = jsonDump["menuItems"][menuIndex].split(",")
-
-        sqlStr = ''
-        for i in range(len(splitStr)):
-            if sqlStr == '':
-                sqlStr += " AND (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            else :
-                sqlStr += " OR (d003 = " + "'" + splitStr[i].replace(" ", "") + "')"
-            
-        if(request.args.get("whereplus") != None):
-            wherecon = request.args.get("whereplus")
-        else:
-            wherecon = sqlStr
-            
-        if datfr == '':
-            datfr = curr - datetime.timedelta(minutes=1)
-            datfr = datfr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        if datto == '':
-            datto = curr.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        
-        result = dbconn.fromtoTraffic(datfr, datto, wherecon)
         cond = dbconn.menuSet("UNIF")
-        return render_template("./subm/mnu016.html", result = result, cond = cond)
+        return render_template("./subm/mnu016.html", result = None, cond = cond)
     else:
         flash(session_text, category="error")
         return render_template('./login/login.html')

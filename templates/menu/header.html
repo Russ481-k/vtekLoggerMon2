@@ -178,6 +178,7 @@
         datas.menuTitle = localStorage.getItem("menuTitle");
         datas.menuIndex = window.location.pathname
         datas.limitNumber = localStorage.getItem("setSearchLimit");
+        datas.format = localStorage.getItem("format");
         localStorage.clear();
       } else {
         let nowDate = new Date();
@@ -238,10 +239,10 @@
           beforeSend: function () {
             $("#loadingDiv").loading({
               onStart: function (loading) {
-                loading.overlay.fadeIn(500);
+                loading.overlay.fadeIn(1000);
               },
               onStop: function (loading) {
-                loading.overlay.fadeOut(500);
+                loading.overlay.fadeOut(1000);
               },
             });
           },
@@ -249,12 +250,23 @@
           complete: function () {
             $("#loadingDiv").hide();
             $("#loadingDiv").loading("toggle");
+            // console.log("datas",datas)
+            // if(){
+            //   let fileName = $(thisEle).data("title") + ".csv";
+            //   let csv = convertNodeToCsvString();
+            //   let link = document.createElement("a");
+            //   let blob = new Blob(["\uFEFF" + csv], { type: "text/csv; charset=utf-8" });
+            //   let url = URL.createObjectURL(blob);
+
+            //   $(link).attr({ download: fileName, href: url });
+            //   link.click();
+            // }
           },
         },
         columns: dataArr,
         lengthChange: true,
-        lengthMenu: [50, 100],
-        pageLength: 50,
+        lengthMenu: [50, 100, 200, 300, 1000, 5000, 10000],
+        pageLength: 100,
       });
 
       datas.datefrom = $("#datefrom").val();
@@ -268,28 +280,22 @@
         $("#csvExportBtn").attr(
           "data-title",
           localStorage.getItem("menuTitle") +
-            "(" +
             datas.datefrom +
             " " +
-            datas.timefrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
-            ") ~ (" +
+            datas.timefrom.replace("_", ":") +
             datas.dateto +
-            " " +
-            datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
-            ")"
+            datas.datetimetofrom.replace("_", ":") 
         );
       } else {
         $("#csvExportBtn").attr(
           "data-title",
-          "(" +
             datas.datefrom +
             " " +
-            datas.timefrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
-            ") ~ (" +
+            datas.timefrom.replace("_", ":") +
+            " ~ " +
             datas.dateto +
             " " +
-            datas.datetimetofrom.replace(/(\d{2})_(\d{2})/, "$1:$2") +
-            ")"
+            datas.datetimetofrom.replace("_", ":")
         );
       }
       localStorage.removeItem("menuTitle");
@@ -305,14 +311,15 @@
   }
 
   function downloadCSV(thisEle) {
-    let fileName = $(thisEle).data("title") + ".csv";
-    let csv = convertNodeToCsvString();
-    let link = document.createElement("a");
-    let blob = new Blob(["\uFEFF" + csv], { type: "text/csv; charset=utf-8" });
-    let url = URL.createObjectURL(blob);
-
-    $(link).attr({ download: fileName, href: url });
-    link.click();
+    localStorage.setItem("setSearchDateFrom", $("#datefrom").val() + " " + $("#timefrom").val());
+    localStorage.setItem("setSearchDateTo", $("#dateto").val() + " " + $("#timeto").val());
+    localStorage.setItem("setSearchText", $("#whereplus").val());
+    localStorage.setItem("setSearchLimit", $("#limitNumber").val());
+    localStorage.setItem("format", "csv");
+    localStorage.setItem("searchFlag", true);
+    location.reload();
+    // $(link).attr({ download: fileName, href: location });
+    // link.click();
   }
 
   function convertNodeToCsvString() {
