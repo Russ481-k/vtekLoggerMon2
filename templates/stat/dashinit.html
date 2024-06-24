@@ -91,75 +91,6 @@
         //areaChartSet();
     });
 
-    function trafficChartSet(){
-        let trafficChart = document.getElementById("trafficChart").getContext('2d');
-        let result_service = {{result_service|tojson}};
-
-        let dateArr = [];
-        let dataArr = [];
-        let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-        let valueBuf = 0
-
-        let next_item = ""
-        let setNextDate = ""
-
-        let result_service_length = result_service["rows"].length
-
-        for(let i = 0; i < result_service_length ; i++){
-            let item = result_service["rows"][i];
-            let setDate = new Date(item[1]).getTime();
-            setDate += KR_TIME_DIFF;
-            setDate = new Date(setDate).toISOString();
-            dateNowSub = setDate.substring(14, 16)%5
-
-
-
-            if(i < result_service_length-1){
-                next_item =  result_service["rows"][i+1];
-                setNextDate = new Date(next_item[1])?.getTime();
-                setNextDate += KR_TIME_DIFF;
-                setNextDate = new Date(setNextDate)?.toISOString();
-                dateNextSub = setNextDate?.substring(14, 16)%5
-            }   
-
-            let date = setDate?.substring(11, 16);
-            let value = item[0];
-
-            if((dateNowSub === 0) && (dateNowSub !== dateNextSub) ){
-                dateArr.push(date);
-                dataArr.push(valueBuf);
-                valueBuf = 0;
-            } else {
-                valueBuf += value
-            } 
-        }
-
-        new Chart(trafficChart, {
-            type: "line",
-            data: {
-                labels: dateArr.reverse(),
-                datasets: [
-                    {
-                        label: "TRAFFIC",
-                        data: dataArr.reverse(),
-                        backgroundColor: "#ff5377",
-                        borderColor: "#ff5377",
-                        borderWidth: 2,
-                        borderCapStyle: 'round',
-                        fill: false,
-                    },
-                ],
-                options: {
-                    responsive: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                },
-            },
-        });
-    }
 
     /*function trafficChartSet(){
         let trafficChart = document.getElementById("trafficChart").getContext('2d');
@@ -245,53 +176,6 @@
         });
     }
 
-    /* function areaChartSet(){
-        let areaChart = document.getElementById("areaChart").getContext('2d');
-        let areaArr = {{area|tojson}};
-        let labelArr = [];
-        let dataArr = [];
-
-        for(let i = 0; i < areaArr.length; i++){
-            labelArr.push(areaArr[i][0]);
-            dataArr.push(areaArr[i][2]);
-        }
-
-
-        new Chart(areaChart, {
-            type: "doughnut",
-            data: {
-                labels: labelArr,
-                datasets: [
-                    {
-                        data: dataArr,
-                        backgroundColor: [
-                            "#FFA7A7",
-                            "#FFE08C",
-                            "#CEF279",
-                            "#B2EBF4",
-                            "#B5B2FF",
-                            "#FFB2F5",
-                            "#D5D5D5",
-                            "#FFC19E",
-                            "#FAED7D",
-                            "#B7F0B1",
-                        ],
-                        radius:0,
-                        borderWidth: 1,
-                    },
-                ],
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-            },
-        });
-    } */
-
     function cpuChartSet(){
         let cpuChart = document.getElementById("cpuChart").getContext('2d');
         let cpu_remain = {{cpu_remain|tojson}};
@@ -324,6 +208,39 @@
         });
     }
 
+    // function memoryChartSet(){
+    //     let memoryChart = document.getElementById("memoryChart").getContext('2d');
+    //     let memory = {{result_mem|tojson}};
+    //     memory[3] = memory[3] / memory[0] * 100;
+    //     memory[4] = memory[4] / memory[0] * 100;
+
+    //     new Chart(memoryChart, {
+    //         type: "doughnut",
+    //         data: {
+    //             labels: ["used", "free"],
+    //             datasets: [
+    //                 {
+    //                     data: [(memory[3]).toFixed(2), (memory[4]).toFixed(2)],
+    //                     backgroundColor: [
+    //                         "#ff5377",
+    //                         "#95c1e6"
+    //                     ],
+    //                     radius:0,
+    //                     borderWidth: 1,
+    //                 },
+    //             ],
+    //         },
+    //         options: {
+    //             responsive: false,
+    //             scales: {
+    //                 y: {
+    //                     beginAtZero: true
+    //                 }
+    //             },
+    //         },
+    //     });
+    // }
+
     function memoryChartSet(){
         let memoryChart = document.getElementById("memoryChart").getContext('2d');
         let memory = {{result_mem|tojson}};
@@ -357,38 +274,78 @@
         });
     }
 
-    function memoryChartSet(){
-        let memoryChart = document.getElementById("memoryChart").getContext('2d');
-        let memory = {{result_mem|tojson}};
-        memory[3] = memory[3] / memory[0] * 100;
-        memory[4] = memory[4] / memory[0] * 100;
 
-        new Chart(memoryChart, {
-            type: "doughnut",
+    
+    function trafficChartSet(){
+        let trafficChart = document.getElementById("trafficChart").getContext('2d');
+        let result_service = {{result_service|tojson}};
+
+        let dateArr = [];
+        let dataArr = [];
+        let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+        let valueBuf = 0
+
+        let next_item = ""
+        let setNextDate = ""
+
+        let result_service_length = result_service["rows"].length
+        console.log(result_service)
+        for(let i = 0; i < result_service_length ; i++){
+            let item = result_service["rows"][i];
+            let setDate = new Date(item[1]).getTime();
+            setDate += KR_TIME_DIFF;
+            setDate = new Date(setDate).toISOString();
+            dateNowSub = setDate.substring(14, 16)%5
+
+
+
+            if(i < result_service_length-1){
+                next_item =  result_service["rows"][i+1];
+                setNextDate = new Date(next_item[1])?.getTime();
+                setNextDate += KR_TIME_DIFF;
+                setNextDate = new Date(setNextDate)?.toISOString();
+                dateNextSub = setNextDate?.substring(14, 16)%5
+            }   
+
+            let date = setDate?.substring(11, 16);
+            let value = item[0];
+
+            if((dateNowSub === 0) && (dateNowSub !== dateNextSub) ){
+                dateArr.push(date);
+                dataArr.push(valueBuf);
+                valueBuf = 0;
+            } else {
+                valueBuf += value
+            } 
+        }
+
+        new Chart(trafficChart, {
+            type: "line",
             data: {
-                labels: ["used", "free"],
+                labels: dateArr.reverse(),
                 datasets: [
                     {
-                        data: [(memory[3]).toFixed(2), (memory[4]).toFixed(2)],
-                        backgroundColor: [
-                            "#ff5377",
-                            "#95c1e6"
-                        ],
-                        radius:0,
-                        borderWidth: 1,
+                        label: "TRAFFIC",
+                        data: dataArr.reverse(),
+                        backgroundColor: "#ff5377",
+                        borderColor: "#ff5377",
+                        borderWidth: 2,
+                        borderCapStyle: 'round',
+                        fill: false,
                     },
                 ],
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
                 },
             },
         });
     }
+
 
     function monthChartSet(){
         let monthChart = document.getElementById("monthChart").getContext('2d');
@@ -422,7 +379,6 @@
                     buf_month = month["rows"][i][1].substring(5,7)
                     buf_day = month["rows"][i][1].substring(8,10)
                 }else{
-                    console.log( buf_month)
                     date =  buf_month + "-" +(Number(buf_day)-1)
                     let value = 0
                     dateArr.unshift(date);
@@ -454,29 +410,36 @@
         let hour = {{result_hour|tojson}};
         let dateArr = [];
         let dataArr = [];
-        let KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-
+        let timeBuff = 0;
         // for(let i = 0; i < hour["rows"].length; i++){
         for(let i = 0; i < 24; i++){
-            if(hour["rows"].length>=24){
 
+            if(i<hour["rows"].length){
                 let item = hour["rows"][i];
                 let setDate = new Date(item[1]).getTime();
-                setDate = setDate + KR_TIME_DIFF;
+                setDate = setDate;
                 setDate = new Date(setDate).toISOString();
-                let date = setDate.substring(5, 10) + " " + setDate.substring(11, 14) + "00";
+                let date = setDate.substring(11, 14) + "00";
                 let value = item[0];
 
                 dateArr.unshift(date);
                 dataArr.unshift(value);
+                timeBuff = Number(setDate.substring(11, 13))-1
             }else{
-                date = "00:" + (i > 10 ? i : "0" + i) + ":00"
+                 
+                date = (timeBuff >= 10 ? timeBuff : "0" + timeBuff) + ":00"
                 let value = 0
                 dateArr.unshift(date);
                 dataArr.unshift(value);
+                if(timeBuff>0){
+                    timeBuff--
+                } else {
+                    timeBuff = 11 - timeBuff
+                }
             }
-        
         }
+        timeBuff = 0
+
 
         new Chart(hourChart, {
             type: "bar",

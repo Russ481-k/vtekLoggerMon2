@@ -271,7 +271,7 @@ def diskstat():
 
 @app.route('/subm/network')  # 요청
 def networkstat():
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql = "select * from hBefore order by d002 desc limit 200"
     cur.execute(sql)
@@ -322,7 +322,7 @@ def menuset():
         else:
             selectValue = " and menuNo = '" + request.args.get("selectValue") + "'"
             
-        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
         cur = db.cursor()
         sql1 = "select activeMenu,menuTitle,useYN,sortCust from menuCustom where attrib not like '%XXX%'" + selectValue
         cur.execute(sql1)
@@ -336,7 +336,7 @@ def menuset():
 @app.route('/updatemenu', methods=['GET','POST'])
 def updatemenu():
     formtotal = request.form
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     mtitles = formtotal.getlist('mtitle')
     mkeys = formtotal.getlist('mkey')
@@ -360,23 +360,20 @@ def updatemenu():
 @app.route('/dashmain')  # 요청
 def searchSel():
     if "userName" in session:
-        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
         cur = db.cursor()
+
+        result_disk = psutil.disk_usage(os.getcwd())
 
         # 현재 시간과 1시간 전 시간을 구합니다.
         now = datetime.datetime.now()
-        one_hours_ago = now - timedelta(hours=1)
 
+        one_hours_ago = now - timedelta(hours=1)
         # TRAFFIC 조회
         result_service = dbconn.fromtoTraffic(str(one_hours_ago)[:-3], str(now)[:-3], "", "inoutt","d001",0)
+        
+        print("result_service : ",result_service,"now",now,"one_hours_ago",one_hours_ago)
 
-        # 나머지 MySQL 쿼리 실행
-        sql = "select * from areafrom limit 10"
-        cur.execute(sql)
-        result_area = cur.fetchall()
-        
-        result_disk = psutil.disk_usage(os.getcwd())
-        
         # 현재 시간과 일주일 전 시간을 구합니다.
         ten_days_ago = now - timedelta(days=10)
 
@@ -389,15 +386,16 @@ def searchSel():
         # 데이터 조회
         result_hour = dbconn.fromtoTraffic(str(one_day_ago)[:-3], str(now)[:-3], "", "daysum","",0)
 
+
+        
         db.close()
 
         return render_template("stat/dashinit.html", 
-                               result_service=result_service, 
-                               area=result_area, 
                                cpu_remain=psutil.cpu_times_percent().idle, 
                                cpu_percent=psutil.cpu_percent(), 
                                result_mem=psutil.virtual_memory(), 
                                result_disk=result_disk, 
+                               result_service=result_service, 
                                result_month=result_month, 
                                result_hour=result_hour)
     else:
@@ -435,7 +433,7 @@ def logout():
 @app.route('/userAdd', methods=['GET', 'POST'])
 def userAdd():
     if "userName" in session:
-        db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+        db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
         cur = db.cursor()
         
         if request.method == 'GET':
@@ -457,7 +455,7 @@ def userAdd():
 
 @app.route('/userUpdate', methods=['POST'])
 def userUpdate():
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql1 = "update userAccount set userPasswd=password(%s) where userId=%s AND attrib NOT LIKE %s" 
     cur.execute(sql1, (str(request.form.get("userPasswd")), str(request.form.get("userId")), str("%XXX")))
@@ -467,7 +465,7 @@ def userUpdate():
 
 @app.route('/userDelete', methods=['POST'])
 def userDelete():
-    db = pymysql.connect(host=envhost, user=envuser, password=envpassword, db=envdb, charset=envcharset)
+    db = pymysql.connect(host=envhostlocal, user=envuser, password=envpassword, db=envdb, charset=envcharset)
     cur = db.cursor()
     sql1 = "update userAccount set attrib='XXXXX' where userId=%s AND attrib NOT LIKE %s" 
     cur.execute(sql1, (str(request.form.get("userId")), str("%XXX")))

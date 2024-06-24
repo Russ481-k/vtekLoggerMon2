@@ -1,36 +1,32 @@
-from influxdb import InfluxDBClient
+import os, requests
+from dotenv import load_dotenv
 
-host = 'localhost'  # InfluxDB 호스트 주소
-port = 8086         # InfluxDB 포트
-database = 'logger'  # 사용할 데이터베이스 이름
-username = 'swcore'  # InfluxDB 사용자 이름
-password = 'core2020'  # InfluxDB 비밀번호
 
-client = InfluxDBClient(host, port, username, password, database)
+load_dotenv()
 
-# 데이터 포인트 생성
-measurement = 'inoutT'  # 측정값의 이름
-tags = {'stamp': 'Initial'}  # 태그 (선택 사항)
-fields = {'d001':'-','d002':'-','d003':'-','d004':'-','d005':'-','d006':'-','d007':'-','d008':'-','d009':'-','d010':'-',
-'d011':'-','d012':'-','d013':'-','d014':'-','d015':'-','d016':'-','d017':'-','d018':'-','d019':'-','d020':'-',
-'d021':'-','d022':'-','d023':'-','d024':'-','d025':'-','d026':'-','d027':'-','d028':'-','d029':'-','d030':'-',
-'d031':'-','d032':'-','d033':'-','d034':'-','d035':'-','d036':'-','d037':'-','d038':'-','d039':'-','d040':'-',
-'d041':'-','d042':'-','d043':'-','d044':'-','d045':'-','d046':'-','d047':'-','d048':'-','d049':'-','d050':'-',
-'d051':'-','d052':'-','d053':'-','d054':'-','d055':'-','d056':'-','d057':'-','d058':'-','d059':'-','d060':'-',
-'d061':'-','d062':'-','d063':'-','d064':'-','d065':'-','d066':'-','d067':'-','d068':'-','d069':'-','d070':'-',
-'d071':'-','d072':'-','d073':'-','d074':'-','d075':'-','d076':'-','d077':'-','d078':'-','d079':'-','d080':'-',
-'d081':'-','d082':'-','d083':'-','d084':'-','d085':'-','d086':'-','d087':'-','d088':'-','d089':'-','d090':'-',
-'d091':'-','d092':'-','d093':'-','d094':'-','d095':'-','d096':'-','d097':'-','d098':'-','d099':'-','d100':'-',
-'d101':'-','d102':'-','d103':'-','d104':'-','d105':'-','d106':'-','d107':'-','d108':'-','d109':'-','d110':'-',
-'d111':'-','d112':'-','d113':'-','d114':'-','d115':'-','d116':'-','d117':'-','d118':'-','d119':'-','d120':'-',
-'d121':'-','d122':'-','d123':'-','d124':'-','d125':'-','d126':'-','d127':'-','d128':'-','d129':'-','d130':'-'}  # 필드
+envhost = os.getenv('envhost')
+envhostlocal = os.getenv('envhostlocal')
+envuser = os.getenv('envuser')
+envpassword = os.getenv('envpassword')
+envdb = os.getenv('envdb')
+envcharset = os.getenv('envcharset')
 
-data = [
-    {
-        'measurement': measurement,
-        'tags': tags,
-        'fields': fields
-    }
-]
-client.write_points(data)
-client.close()
+def initTables():
+    url = "http://"+ envhost + ":5654/db/query"
+    inoutt ="CREATE LOG TABLE if not exists INOUTT(D000 varchar(100),D001 DATETIME,D002 varchar(100),D003 varchar(100),D004 varchar(100),D005 varchar(100),D006 varchar(100),D007 varchar(100),D008 varchar(100),D009 varchar(100),D010 varchar(100),D011 varchar(100),D012 varchar(100),D013 varchar(100),D014 varchar(100),D015 varchar(100),D016 varchar(100),D017 varchar(100),D018 varchar(100),D019 varchar(100),D020 varchar(100),D021 varchar(100),D022 varchar(100),D023 varchar(100),D024 varchar(100),D025 varchar(100),D026 varchar(100),D027 varchar(100),D028 varchar(100),D029 varchar(100),D030 varchar(100),D031 varchar(100),D032 varchar(100),D033 varchar(100),D034 varchar(100),D035 varchar(100),D036 varchar(100),D037 varchar(100),D038 varchar(100),D039 varchar(100),D040 varchar(100),D041 varchar(100),D042 varchar(100),D043 varchar(100),D044 varchar(100),D045 varchar(100),D046 varchar(100),D047 varchar(100),D048 varchar(100),D049 varchar(100),D050 varchar(100),D051 varchar(100),D052 varchar(100),D053 varchar(100),D054 varchar(100),D055 varchar(100),D056 varchar(100),D057 varchar(100),D058 varchar(100),D059 varchar(100),D060 varchar(100),D061 varchar(100),D062 varchar(100),D063 varchar(100),D064 varchar(100),D065 varchar(100),D066 varchar(100),D067 varchar(100),D068 varchar(100),D069 varchar(100),D070 varchar(100),D071 varchar(100),D072 varchar(100),D073 varchar(100),D074 varchar(100),D075 varchar(100),D076 varchar(100),D077 varchar(100),D078 varchar(100),D079 varchar(100),D080 varchar(100),D081 varchar(100),D082 varchar(100),D083 varchar(100),D084 varchar(100),D085 varchar(100),D086 varchar(100),D087 varchar(100),D088 varchar(100),D089 varchar(100),D090 varchar(100),D091 varchar(100),D092 varchar(100),D093 varchar(100),D094 varchar(100),D095 varchar(100),D096 varchar(100),D097 varchar(100),D098 varchar(100),D099 varchar(100),D100 varchar(100),D101 varchar(100),D102 varchar(100),D103 varchar(100),D104 varchar(100),D105 varchar(100),D106 varchar(100),D107 varchar(100),D108 varchar(100),D109 varchar(100),D110 varchar(100),D111 varchar(100),D112 varchar(100),D113 varchar(100),D114 varchar(100),D115 varchar(100),D116 varchar(100),D117 varchar(100),D118 varchar(100),D119 varchar(100));"
+    daysum ="CREATE LOG TABLE if not exists DAYSUM('count' varchar(100), time DATETIME)"
+    weeksum ="CREATE LOG TABLE if not exists WEEKSUM('count' varchar(100), time DATETIME)"
+    try:
+        response_inoutt = requests.get(url, params={"q": inoutt, "timeformat": "Default", "tz": "Asia/Seoul"})
+        response_daysum = requests.get(url, params={"q": daysum, "timeformat": "Default", "tz": "Asia/Seoul"})
+        response_weeksum = requests.get(url, params={"q": weeksum, "timeformat": "Default", "tz": "Asia/Seoul"})
+        
+        print(response_inoutt.json())
+        print(response_daysum.json())
+        print(response_weeksum.json())
+        return 
+
+    except Exception as e:
+        print('fromtoTraffic 접속오류', e)
+
+initTables()

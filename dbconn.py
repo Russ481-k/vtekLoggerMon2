@@ -15,8 +15,9 @@ envcharset = os.getenv('envcharset')
 def selectUsers(uid, upw):
     row = None
     connection = None
+    
     try:
-        connection = my.connect(host=envhost,
+        connection = my.connect(host=envhostlocal,
                                 user=envuser,
                                 password=envpassword,
                                 database=envdb,
@@ -27,7 +28,7 @@ def selectUsers(uid, upw):
         cursor.execute(sql, (uid, upw, str("%XXX")))
         row = cursor.fetchone()
     except Exception as e:
-        print('접속오류', e)
+        print('selectUsers 접속오류', e)
     finally:
         if connection:
             connection.close()
@@ -35,22 +36,24 @@ def selectUsers(uid, upw):
 
 def fromtoTraffic(date_from, date_to, wherecon="", table="inoutt",group_by="d001", limit=0):
     url = "http://"+ envhost + ":5654/db/query"
-
     query = ""
+
     if table != "inoutt":
-        query = f"SELECT count, time FROM {table}"    
+        query = f"SELECT count, time FROM {table};"    
     elif limit > 0:
         query = f"SELECT count(d000), d001 FROM {table} WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by {group_by} order by d001 desc limit {str(limit)}"
     else:
         query = f"SELECT count(d000), d001 FROM {table} WHERE d001 BETWEEN to_timestamp('{date_from}') AND to_timestamp('{date_to}') {wherecon} group by {group_by} order by d001 desc"
     try:
+        print(query)
         response = requests.get(url, params={"q": query, "timeformat": "Default", "tz": "Asia/Seoul"})
+
         result = response.json()["data"]
 
         return result
 
     except Exception as e:
-        print('접속오류', e)
+        print('fromtoTraffic 접속오류', e)
 
 def fromtoLength(date_from, date_to, wherecon, limit):
     url = "http://"+ envhost + ":5654/db/query"
@@ -62,7 +65,7 @@ def fromtoLength(date_from, date_to, wherecon, limit):
         
         return result
     except Exception as e:
-        print('접속오류', e)
+        print('fromtoLength 접속오류', e)
 
 def fromtoTrafficLimit(date_from, date_to, wherecon, req, format="json"):
 
@@ -102,13 +105,13 @@ def fromtoTrafficLimit(date_from, date_to, wherecon, req, format="json"):
             return result
 
     except Exception as e:
-        print('접속오류', e)
+        print('fromtoTrafficLimit 접속오류', e)
 
 def menuSet(typ):
     rows = None
     connection = None
     try:
-        connection = my.connect(host=envhost,
+        connection = my.connect(host=envhostlocal,
                                 user=envuser,
                                 password=envpassword,
                                 database=envdb,
@@ -119,7 +122,7 @@ def menuSet(typ):
         cursor.execute(sql, ("Y", typ))
         rows = cursor.fetchall()
     except Exception as e:
-        print('접속오류', e)
+        print('menuSet 접속오류', e)
     finally:
         if connection:
             connection.close()

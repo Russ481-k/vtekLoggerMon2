@@ -1,4 +1,4 @@
 /.env
 /dummyLogger.py
 /nohup.out
-/*.pyc
+/.venv
