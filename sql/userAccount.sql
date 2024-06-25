@@ -1,0 +1,57 @@
+-- MariaDB dump 10.19  Distrib 10.6.16-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: logger
+-- ------------------------------------------------------
+-- Server version	10.6.16-MariaDB-0ubuntu0.22.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `userAccount`
+--
+
+DROP TABLE IF EXISTS `userAccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userAccount` (
+  `userNo` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(100) DEFAULT NULL,
+  `userName` varchar(100) DEFAULT NULL,
+  `userPasswd` varchar(100) DEFAULT NULL,
+  `userEmail` varchar(100) DEFAULT NULL,
+  `userKey` varchar(100) DEFAULT NULL,
+  `userRole` varchar(10) DEFAULT NULL,
+  `attrib` varchar(15) NOT NULL DEFAULT '10000',
+  PRIMARY KEY (`userNo`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `userAccount`
+--
+
+LOCK TABLES `userAccount` WRITE;
+/*!40000 ALTER TABLE `userAccount` DISABLE KEYS */;
+INSERT INTO `userAccount` VALUES (9,'admin','관리자','*A03078F285FEB5EE42D12E8C31B746D9F7A9CE98','ywpapa@gmail.com','111111111','ADMIN','10000'),(14,'testest','test','*A03078F285FEB5EE42D12E8C31B746D9F7A9CE98','testestse','1111111111','ADMIN','XXXXX'),(21,'test','testest','*A03078F285FEB5EE42D12E8C31B746D9F7A9CE98','setsetsetsetse','1111111111','ADMIN','XXXXX'),(22,'vtek','비전테크','*A03078F285FEB5EE42D12E8C31B746D9F7A9CE98','ywpapa@gmail.com','1111111111','ADMIN','10000'),(26,'test11','test111','*89C6B530AA78695E257E55D63C00A6EC9AD3E977','test','1111111111','ADMIN','XXXXX'),(27,'devdjk','김동진','*5AB544FDD4EC798C4FBB9D81D2278633E9DF9C6D','ywpapa@gmail.com','1111111111','ADMIN','10000'),(29,'ykoh','오영교','*4BED7CCE76CC10B5AE9CCD817372BB841BE70707','ykoh@vtek.co.kr','1111111111','ADMIN','10000');
+/*!40000 ALTER TABLE `userAccount` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-06-15  4:08:39
