@@ -1,6 +1,0 @@
-envhost="192.168.1.45"
-envhostlocal="localhost"
-envuser="swcore"
-envpassword="core2020"
-envdb="logger"
-envcharset="utf8"
