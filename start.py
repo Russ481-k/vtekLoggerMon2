@@ -22,7 +22,7 @@ def run_command(command):
 
 
 # 1. 깃허브 파일 로드 및 파일 권한 설정
-if run_command('sudo chown -R vtek:vtek ./').returncode != 0:
+if run_command('sudo chown -R vtek ./').returncode != 0:
     print("깃허브 파일 권한 설정 중 오류가 발생했습니다.")
 else:
     print("깃허브 파일 권한 설정 성공.")
@@ -65,6 +65,16 @@ if run_command('sudo apt update').returncode != 0:
     print("APT 업데이트 중 오류가 발생했습니다.")
 else:
     print("APT 업데이트 성공.")
+
+if run_command('sudo apt-get install git unzip python3-pip vim').returncode != 0:
+    print("APT 의존성 모듈 설치 중 오류가 발생했습니다.")
+else:
+    print("APT 의존성 모듈 설치 성공.")
+
+if run_command('sudo pip3 install flask pymysql requests psutil python-dotenv aiohttp schedule numpy').returncode != 0:
+    print("pip 의존성 모듈 설치 중 오류가 발생했습니다.")
+else:
+    print("pip 의존성 모듈 설치 성공.")
 
 if run_command('sudo apt install mariadb-server --fix-missing --fix-broken').returncode != 0:
     print("MariaDB 설치 중 오류가 발생했습니다.")
@@ -158,6 +168,27 @@ if run_command(f'./machbase-neo-v8.0.20-linux-amd64/machbase-neo serve --host 19
 else:
     print("Machbase 실행 성공.")
 
+
+#사용 포트 개방
+if run_command('sudo apt install iptables').returncode != 0:
+    print("iptables 설치 중 오류가 발생했습니다.")
+else:
+    print("iptables 설치 성공.")
+
+\if run_command('sudo iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT').returncode != 0:
+    print("80포트 개방 중 오류가 발생했습니다.")
+else:
+    print("80포트 개방 성공.")
+
+if run_command('sudo iptables -I INPUT 1 -p tcp --dport 443 -j ACCEPT').returncode != 0:
+    print("443포트 개방 중 오류가 발생했습니다.")
+else:
+    print("443포트 개방 성공.")
+
+if run_command('sudo iptables -I INPUT 1 -p tcp --dport 5654 -j ACCEPT').returncode != 0:
+    print("5654포트 개방 중 오류가 발생했습니다.")
+else:
+    print("5654포트 개방 성공.")
 
 
 # 8. 초기 테이블 생성
