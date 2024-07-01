@@ -143,25 +143,21 @@ else:
 #         connection.close()
             
 
-if 'ubuntu' in system or 'debian' in system:
-    # 우분투
-    if run_command('sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"').returncode != 0:
-        print("Machbase 설치 중 오류가 발생했습니다.")
-    else:
-        print("Machbase 설치 성공.")
-
-    if run_command('unzip machbase-neo-v8.0.20-linux-amd64.zip').returncode != 0:
-        print("Machbase 압축 해제 중 오류가 발생했습니다.")
-    else:
-        print("Machbase 압축 해제 성공.")
-
-    if run_command('./machbase-neo-v8.0.20-linux-amd64/machbase-neo serve --host 192.168.1.45 --daemon --pid ./machbase-neo.pid').returncode != 0:
-        print("Machbase 실행 중 오류가 발생했습니다.")
-    else:
-        print("Machbase 실행 성공.")
-
+if run_command('sh -c "$(curl -fsSL https://docs.machbase.com/install.sh)"').returncode != 0:
+    print("Machbase 설치 중 오류가 발생했습니다.")
 else:
-    print("지원되지 않는 시스템입니다. 수동으로 Machbase를 설치하세요.")
+    print("Machbase 설치 성공.")
+
+if run_command('unzip machbase-neo-v8.0.20-linux-amd64.zip').returncode != 0:
+    print("Machbase 압축 해제 중 오류가 발생했습니다.")
+else:
+    print("Machbase 압축 해제 성공.")
+
+if run_command(f'./machbase-neo-v8.0.20-linux-amd64/machbase-neo serve --host 192.168.1.47 --daemon --pid ./machbase-neo.pid').returncode != 0:
+    print("Machbase 실행 중 오류가 발생했습니다.")
+else:
+    print("Machbase 실행 성공.")
+
 
 
 # 8. 초기 테이블 생성
@@ -170,31 +166,31 @@ if run_command('sudo python3 ./iniTable.py').returncode != 0:
 else:
     print("초기 테이블 생성 성공.")
 
-# 9. 로거 프로세스 실행/중지
-if run_command('sudo python3 ./stopLogger.py').returncode != 0:
-    print("로거 프로세스 중지 중 오류가 발생했습니다.")
-else:
-    print("로거 프로세스 중지 성공.")
+# # 9. 로거 프로세스 실행/중지
+# if run_command('sudo python3 ./stopLogger.py').returncode != 0:
+#     print("로거 프로세스 중지 중 오류가 발생했습니다.")
+# else:
+#     print("로거 프로세스 중지 성공.")
 
-if run_command('sudo python3 ./startLogger.py').returncode != 0:
-    print("로거 프로세스 실행 중 오류가 발생했습니다.")
-else:
-    print("로거 프로세스 실행 성공.")
+# if run_command('sudo python3 ./startLogger.py').returncode != 0:
+#     print("로거 프로세스 실행 중 오류가 발생했습니다.")
+# else:
+#     print("로거 프로세스 실행 성공.")
 
-# 10. 스케줄러 실행
-if run_command('sudo python3 ./schedule_sum.py').returncode != 0:
-    print("스케줄러 실행 중 오류가 발생했습니다.")
-else:
-    print("스케줄러 실행 성공.")
+# # 10. 스케줄러 실행
+# if run_command('sudo python3 ./schedule_sum.py').returncode != 0:
+#     print("스케줄러 실행 중 오류가 발생했습니다.")
+# else:
+#     print("스케줄러 실행 성공.")
 
-# 11. 웹 프로세스 실행/중지
-if run_command('sudo python3 ./stopWeb.py').returncode != 0:
-    print("웹 프로세스 중지 중 오류가 발생했습니다.")
-else:
-    print("웹 프로세스 중지 성공.")
+# # 11. 웹 프로세스 실행/중지
+# if run_command('sudo python3 ./stopWeb.py').returncode != 0:
+#     print("웹 프로세스 중지 중 오류가 발생했습니다.")
+# else:
+#     print("웹 프로세스 중지 성공.")
 
-if run_command('sudo python3 ./startWeb.py').returncode != 0:
-    print("웹 프로세스 실행 중 오류가 발생했습니다.")
-else:
-    print("웹 프로세스 실행 성공.")
+# if run_command('sudo python3 ./startWeb.py').returncode != 0:
+#     print("웹 프로세스 실행 중 오류가 발생했습니다.")
+# else:
+#     print("웹 프로세스 실행 성공.")
 
