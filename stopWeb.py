@@ -13,6 +13,7 @@ def get_current_directory():
 folderDirectory = get_current_directory()
 
 
+
 def kill_processes(pids):
     for pid in pids:
         try:
@@ -26,8 +27,8 @@ def kill_processes(pids):
 
 def stop_processes():
     # 종료할 프로세스 PID를 찾기 위한 명령어
-    find_app_pids = f"pgrep -f 'python3 {folderDirectory}/vtekLoggerMon2/app.py'"
-    find_schedule_pids = f"pgrep -f 'python3 {folderDirectory}/vtekLoggerMon2/schedule_sum.py'"
+    find_app_pids = f"pgrep -f 'python3 ./app.py'"
+    find_schedule_pids = f"pgrep -f 'python3 ./schedule_sum.py'"
 
     # PID를 찾고 종료
     app_pids_output = subprocess.check_output(
