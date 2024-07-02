@@ -1,12 +1,7 @@
 import os
 import signal
-from dotenv import load_dotenv
 
-load_dotenv()
-
-folderDirectory = os.getenv('folderdirectory')
-
-pid_file = f'{folderDirectory}/udpDaemonMachbase.pid'
+pid_file = './udpDaemonMachbase.pid'
 
 def terminate_process():
     try:
