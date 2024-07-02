@@ -10,10 +10,6 @@ sudo apt install iptables
 sudo pip3 install flask pymysql requests psutil python-dotenv aiohttp schedule numpy
 ```
 
-#################################
-# sudo python3 start.py 를 통해 설치 가능 #
-#################################
-
 ```
 sudo iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
 sudo iptables -I INPUT 1 -p tcp --dport 443 -j ACCEPT
