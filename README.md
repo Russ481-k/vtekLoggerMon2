@@ -79,7 +79,7 @@ sudo python3 ./iniTable.py
 ```
 
 ```
-nohup python3 udpDaemonMachbase.py & echo $! > ./udpDaemonMachbase.piad
+nohup python3 udpDaemonMachbase.py & echo $! > ./udpDaemonMachbase.pid
 ```
 
 ```
