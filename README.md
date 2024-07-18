@@ -30,12 +30,14 @@ sudo vi .env
 
 (insert) key click
 
+```
 envhost="0.0.0.0"
 envhostlocal="localhost"
 envuser="root"
 envpassword=""
 envdb="logger"
 envcharset="utf8"
+```
 
 (esc)
 
