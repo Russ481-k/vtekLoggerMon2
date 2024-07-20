@@ -34,10 +34,11 @@ sudo vi .env
 envhost="0.0.0.0"
 envhostlocal="localhost"
 envuser="root"
-envpassword=""
+envpassword='root'
 envdb="logger"
 envcharset="utf8"
 ```
+envhost 및 envpassword 설정 필요
 
 (esc)
 
@@ -50,9 +51,8 @@ sudo mysql
 ```
 CREATE DATABASE logger;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-CREATE USER 'vtek'@'localhost' IDENTIFIED BY 'core2020';
-GRANT ALL PRIVILEGES ON *.* TO 'vtek'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+ALTER user 'root'@'localhost' identified by 'root';
 EXIT;
 ```
 
